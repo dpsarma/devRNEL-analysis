@@ -4,8 +4,8 @@ clear all;
 load('D:\FigRescources\UH3\LSP05\rehash\responses_500us_1Hz_allElecsRC.mat')
 response = response2; clear response2;
 
-imuscles = [9:16];
-labelmuscles = { 'VM', 'RF', 'VL', 'BF', 'ST', 'TA', 'MG', 'LG'};
+imuscles = [1:8];
+labelmuscles = { 'VM', 'RF', 'VL', 'BF', 'ST', 'TA', 'SO', 'LG'}; %MG for LSP05 SO for LSP02b
 
 %% NNMF for by subgroup
 stimAmps = [2000 4000 6000];
@@ -16,7 +16,9 @@ midx = [1 3 2 4 5 6 8 7];
 
 hF = figure; maximize;
     
-tiledlayout(6*length(stimAmps)/length(stimAmps),length(stimAmps)*2);
+% % tiledlayout(6*length(stimAmps)/length(stimAmps),length(stimAmps)*2);
+cmap = magma;
+colormap(cmap);
     
 for ttmp = 1:6
 % %     clearvars -except response ttmp hF resp labelmuscles stimAmps elecs C imuscles
@@ -43,8 +45,11 @@ for ttmp = 1:6
         idelecs = [1 4 7 8];
     end
         
-
+figure; maximize;
+tiledlayout(3,2)
     for iS = 1:length(stimAmps) 
+        figure; maximize;
+        tiledlayout(1,2)
         resp(ttmp).elecs = idelecs;
         for iE = 1:length(idelecs)
             eI = find([response(:).elec] == idelecs(iE));
@@ -58,7 +63,7 @@ for ttmp = 1:6
         end
         
         
- nexttile;
+        nexttile;
 % %             subplot(length(stimAmps),2,(2*iS-1))
         if length(idelecs) <= 2
             k = 1   
@@ -87,10 +92,11 @@ for ttmp = 1:6
         
          nexttile; 
 % %          subplot(length(stimAmps),2,2*iS)
+        colormap(cmap);
         imagesc(resp(ttmp).stim(iS).H'); hold on;
         yticks([1:8]); yticklabels(labelmuscles);
         title([titstring ' | ' num2str(stimAmps(iS)/1000) 'mA']);
-        colorbar;
+        colorbar; caxis([0,0.8]);
     end
        
  
@@ -103,7 +109,7 @@ check_f = 1;
 msubset = [9:16];%[11 12 16 14];
 % % etmp= [response.elec];
 % % elecs = etmp(1:4:end);
-elecs = [7 8 10 11 12 9 14 15 16 18 19 20 23 24];%[1 4 7 9 11 18 13 20 16 23 26 29];
+elecs = [1 2 3 4 5 6 7 8 9 10 11 12 33 34 35] %[7 8 10 11 12 9 14 15 16 18 19 20 23 24];%[1 4 7 9 11 18 13 20 16 23 26 29];
 C = linspecer(length(msubset));
 
 for i = 1:length(msubset)
@@ -162,5 +168,138 @@ set(0,'defaultAxesFontSize',12)
 % % 
 % % close all;
 
-%% Plot Onset vs AUC
-       
+%% Find Frequency of Activation at Threshold
+for i = 1:length(response)
+    for m = 1:16
+        threshes(m,i) = response(i).muscle(m).threshold; %m-8
+    end
+end
+
+sensethresh = [4000 4000 3500 3000 3000 2000 2000 2500 2500 2000 ...
+    2000 2000 2000 2000 3000 3000 2000 2000 2000 2000 1000 1000 2000 1000 1000 2000]; %LSP05
+
+for i = 1:length(response)
+    min_thresh = min(threshes(:,i));
+    sen_thresh = sensethresh(i);
+    for m = 1:16
+        if threshes(m,i) <= min_thresh
+            count(m,i) = 1;
+        else
+            count(m,i) = 0;
+        end
+        
+        if threshes(m,i) <= 2*min_thresh
+            count2(m,i) = 1;
+        else
+            count2(m,i) = 0;
+        end
+        
+        if threshes(m,i) <= sen_thresh
+            countS(m,i) = 1;
+        else
+            countS(m,i) = 0;
+        end
+                
+    end
+end
+
+musc_heat  = sum(count,2)/length(count);
+musc_heat2  = sum(count2,2)/length(count2);
+musc_heatS  = sum(countS,2)/length(countS);
+
+cmap = magma;
+tiledlayout(1,3)
+h(1) = nexttile;
+imagesc(musc_heat); 
+colormap(cmap);
+colorbar;
+caxis([0 1]);
+title('At Threshold');
+yticklabels(labelmuscles);
+h(2) = nexttile;
+imagesc(musc_heat2); 
+colormap(cmap);
+colorbar
+caxis([0 1]);
+title('At 2x Threshold');
+h(3) = nexttile;
+imagesc(musc_heatS); 
+colormap(cmap);
+colorbar
+caxis([0 1]);
+title('At Sensory Threshold');
+% % 
+% % linkaxes([h],'xy');
+
+%% Find Frequency of Activation at Threshold for LSP02b
+% load('C:\Users\dsarma\Box\UH3_paperFigs\LSP02b Threshold Vals.mat')
+labelmuscles = { 'lBF', 'lLG', 'lRF', 'lSO', 'lST', 'lVL', 'lVM', 'lTA',...
+    'rBF', 'rLG', 'rRF', 'rSO', 'rST', 'rTA', 'rVL', 'rVM'};
+
+for i = 1:size(threshesTable,2)
+    for m = 1:size(threshesTable,1)
+        if isnumeric(threshesTable{m,i})
+            threshes(m,i) = table2array(threshesTable(m,i))
+        else
+            threshes(m,i) = nan(1)
+        end
+    end
+end
+    
+for i = 1:size(threshes,2)
+    min_thresh = min(threshes(:,i));
+    sen_thresh = sensethresh(i);
+    for m = 1:16
+        if threshes(m,i) <= min_thresh
+            count(m,i) = 1;
+        else
+            count(m,i) = 0;
+        end
+        
+        if threshes(m,i) <= 2*min_thresh
+            count2(m,i) = 1;
+        else
+            count2(m,i) = 0;
+        end
+        
+        if threshes(m,i) <= sen_thresh
+            countS(m,i) = 1;
+        else
+            countS(m,i) = 0;
+        end
+                
+    end
+end
+
+musc_heat  = sum(count,2)/length(count);
+musc_heat2  = sum(count2,2)/length(count2);
+musc_heatS  = sum(countS,2)/length(countS);
+
+cmap = magma;
+tiledlayout(1,3)
+h(1) = nexttile;
+imagesc(musc_heat); 
+colormap(cmap);
+colorbar;
+caxis([0 1]);
+title('At Threshold');
+yticks(1:16)
+yticklabels(labelmuscles);
+h(2) = nexttile;
+imagesc(musc_heat2); 
+colormap(cmap);
+colorbar
+caxis([0 1]);
+title('At 2x Threshold');
+yticks(1:16)
+yticklabels(labelmuscles);
+h(3) = nexttile;
+imagesc(musc_heatS); 
+colormap(cmap);
+colorbar
+caxis([0 1]);
+title('At Sensory Threshold');
+yticks(1:16)
+yticklabels(labelmuscles);
+% % 
+% % linkaxes([h],'xy');

@@ -1,43 +1,39 @@
-%% UH3 EMG - Recruitment Curves - Quick Load Trial Stats - Testing Version %%
-%% Basic Processing for Frequency and Set on Elec 9 and 16
+%% Rehash 2 for Each Subject : LSP02b LSP05
 
-subjectName = 'LSP05'; setName = 'Stability'; setDescrpt = 'E9_day15'; %file safe names only
+%% Subject Info and Load Data Files
+% subjectName = 'LSP05'; setName = 'RCs';
+subjectName = 'LSP02b'; setName = 'RCs';
+% subjectName = 'LSP02b'; setName = 'SitStand';
 
-% Set Paths and Experiment Names
-path_datatank = ['D:\DATA\UH3 testing\' subjectName '\']; %'C:\DataTanks\2018\'; %'R:\data_raw\human\uh3_stim\';
-path_stimparams = ['R:\data_raw\human\uh3_stim\' subjectName '\data\Open Loop\stim\'];
+switch subjectName
+    case 'LSP05'
+        Muscle_ID = {'Right VM', 'Right RF', 'Right VL', 'Right BF', 'Right ST', ...
+        'Right TA', 'Right SO', 'Right LG','Left VM', 'Left RF','Left VL',...
+        'Left BF', 'Left ST', 'Left TA', 'Left MG', 'Left LG'};
+    
+        uiopen('C:\Users\dsarma\Box\HotelCali_paperFigs\resources\LSP05_nev_list.csv',1);
 
-reportPath = ['D:\FigRescources\UH3\' subjectName '\rehash\']; %['R:\data_generated\human\uh3_stim\' subjectName '\emgRecruitment_Summary\'];
-setPath = [reportPath setName '\'];
-mkdir(setPath); 
-
-%% Muscles Used (RF & VL Switched)  Need to switch EMG channels as well
-Muscle_ID = {'Right VM', 'Right VL', 'Right RF', 'Right BF', 'Right ST', ...
-    'Right TA', 'Right SO', 'Right LG','Left VM', 'Left VL','Left RF',...
-    'Left BF', 'Left ST', 'Left TA', 'Left MG', 'Left LG'};
-
+    case 'LSP02b'
+        Muscle_ID = {'Right VM', 'Right RF', 'Right VL', 'Right BF', 'Right ST', ...
+        'Right TA', 'Right SO', 'Right LG','Left VM','Left RF','Left VL',...
+        'Left BF', 'Left ST', 'Left Ham', 'Left MG', 'Left LG'};
+    
+        if strcmp(setName,'RCs')
+            uiopen('C:\Users\dsarma\Box\HotelCali_paperFigs\resources\LSP02b_nev_list.csv',1);
+            setDescrpt = 'E1-12_33-35';
+        else 
+            uiopen('C:\Users\dsarma\Box\HotelCali_paperFigs\resources\LSP02b_nev_list_sitstand.csv',1);
+        end
+end
 C = linspecer(length(Muscle_ID)/2,'qualitative');
 
+%% Set Paths and Experiment Names
+path_datatank = ['R:\data_raw\human\uh3_stim\' subjectName '\data\Trellis\'];
+path_stimparams = ['R:\data_raw\human\uh3_stim\' subjectName '\data\Open Loop\stim\'];
 
-% % externalStimulator = 'no'; %no = NanoStims
-multipolar = 'no';
-chanPort = 128; % 128 or 256 based on which Grapevine Port (B or C)
-artifactBuffer = 0.005; % post stim artifact settle lag in s, so 0.01 is 10ms
-rmsWindow = 0.05; % post stim RMS Window in s, so 0.05 is 50ms
-
-
-%% Identify files to load
-disp('Please Select the Ripple Data Folder');
-[emgFilenames, emgPathname] = uigetfile([path_datatank '*.nev'],'Pick files','MultiSelect', 'on');
-disp(['User selected ', fullfile(emgPathname, emgFilenames)]);
-
-% disp('Please Select the Folder with the Stim Trial Info:');
-trialPathname = uigetdir([path_stimparams] , 'OpenLoop Stim Trial Info');
-
-for f = 1:length(emgFilenames)
-    trialFilenames{f} = [emgFilenames{f}(1:end-10) '.mat']; %2014a friendly, no erase function (-4 for just file, -10 for _x# thing)
-end
-
+reportPath = ['D:\FigRescources\UH3\HotelCali\' subjectName '\']; 
+setPath = [reportPath setName '\'];
+mkdir(setPath); 
 
 %% Initialize Analysis Parameters
 
@@ -46,7 +42,7 @@ fs = 30e3;
 nyq = 0.5*fs;
 
 %Bandpass
-lowCut = 20; %lowest frequency to pass
+lowCut = 30; %lowest frequency to pass
 highCut = 800; %highest frequency to pass
 Norder = 2;
 Wp = [lowCut, highCut]/(nyq);
@@ -63,6 +59,27 @@ NorderS =  2;
 dt = 1/fs;
 [bS,aS] = butter(NorderS,Fsmooth/(nyq));
 
+% % externalStimulator = 'no'; %no = NanoStims
+multipolar = 'no';
+chanPort = 128; % 128 or 256 based on which Grapevine Port (B or C)
+artifactBuffer = 0.005; % post stim artifact settle lag in s, so 0.01 is 10ms
+rmsWindow = 0.05; % post stim RMS Window in s, so 0.05 is 50ms
+
+%% Identify files to load
+% disp('Please Select the Folder with the Stim Trial Info:');
+
+%% Identify files to load
+disp('Please Select the Ripple Data Folder');
+[tmpFilenames, emgPathname] = uigetfile([path_datatank '*.nev'],'Pick files','MultiSelect', 'on');
+% % disp(['User selected ', fullfile(emgPathname, emgFilenames)]);
+
+%% Make File List
+for f = 1:length(filenames)
+    t = find(contains(tmpFilenames',filenames(f)));
+    emgFilenames{f} = tmpFilenames(t);
+    trialFilenames{f} = [filenames{f} '.mat']; %2014a friendly, no erase function (-4 for just file, -10 for _x# thing)
+end
+trialPathname = path_stimparams;
 %% Load Files and Process
 for fnum = 1:length(emgFilenames)
     
@@ -70,7 +87,7 @@ for fnum = 1:length(emgFilenames)
     
     %% Get Basic File Info
     trial(fnum).Name = erase(trialFilenames{fnum}, '.mat'); 
-    [ns_status, hFile] = ns_OpenFile([emgPathname emgFilenames{fnum}]); 
+    [ns_status, hFile] = ns_OpenFile([char(emgPathname) char(emgFilenames{fnum})]); 
     [ns_RESULT, nsFileInfo] = ns_GetFileInfo(hFile);
     ns_CloseFile(hFile);
     
@@ -78,7 +95,7 @@ for fnum = 1:length(emgFilenames)
     trial(fnum).Time = join(string([nsFileInfo.Time_Hour nsFileInfo.Time_Min nsFileInfo.Time_Sec nsFileInfo.Time_MilliSec]),':');
     
     %% Load Data
-    [analogData,timeVec] = read_continuousData([emgPathname emgFilenames{fnum}], 'raw' , chanPort+[1:length(Muscle_ID)*2]); %128 vs 256 | 8 vs. 16
+    [analogData,timeVec] = read_continuousData([char(emgPathname) char(emgFilenames{fnum})], 'raw' , chanPort+[1:length(Muscle_ID)*2]); %128 vs 256 | 8 vs. 16
     %% 'Data' -> Bipolar EMG
     for i = 1:2:size(analogData,1)
         bipolar = analogData(i:i+1,:);
@@ -114,7 +131,7 @@ for fnum = 1:length(emgFilenames)
         trial(fnum).stimFrequency = cell2mat(trialInfo.Stim_params(1).Frequency); %this is provided in Hz
         trial(fnum).numStims = trial(fnum).stimDuration*trial(fnum).stimFrequency;
         
-        [stimEvts,stchannels] = read_stimEvents([emgPathname emgFilenames{fnum}],trial(fnum).nevStimCh);
+        [stimEvts,stchannels] = read_stimEvents(char(fullfile(emgPathname, emgFilenames{fnum})),trial(fnum).nevStimCh);
         stims = floor(cell2mat(stimEvts)*fs);
         
         stimLength = (trial(fnum).pulseWidth/1000)*fs + 2; %Pulse Width in ms, interstim interval is 2 ticks of clock (2/fs)
@@ -134,7 +151,8 @@ for fnum = 1:length(emgFilenames)
                 setDescrpt setPath artifactBuffer rmsWindow ...
                 externalStimulator nSampsPre nSampsPost chanPort C multipolar
 end
-        
+
+%% Get details
 
 clearvars -except reportPath Muscle_ID ...
                   trial subjectName setName ...
@@ -171,7 +189,9 @@ for fnum = 1:length(trial)
             dtPost = 4e-3; % msec after stim onset 
             rmsWindow = 0.050; % post stim RMS Window in s, so 0.05 is 50ms
         otherwise 
-            continue;
+            dtPre = 50e-3; % msec before stim onset 
+            dtPost = 4e-3; % msec after stim onset 
+            rmsWindow = 0.005; % post stim RMS Window in s, so 0.05 is 50ms;
     end
     
      %% Build Epoch Time Vector
@@ -213,4 +233,4 @@ for fnum = 1:length(trial)
     end
 end
 disp('saving')
-save([reportPath '\' setName '_' setDescrpt '.mat'], '-v7.3');
+save([reportPath '\' setName '_' setDescrpt 'v2.mat'], '-v7.3');

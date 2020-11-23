@@ -12,17 +12,17 @@ for ttmp = 1:6
 clearvars -except response ttmp hF
     switch ttmp
     case 1
-        idelecs = [1:4]        
+        idelecs = [7:8]    %1:4    
     case 2
-        idelecs = [7:8] 
+        idelecs = [10:12] %7:8
     case 3
-        idelecs = [10:15]
+        idelecs = [9 14:15] %10-15
     case 4
-        idelecs = [9 16]
+        idelecs = [16]  
     case 5
-        idelecs = [18 19 20 23 24]
+        idelecs = [18 19]
     case 6
-        idelecs = [25:29]
+        idelecs = [20 23:24]
     otherwise
         idelecs = [1 4 7 8];
 end
@@ -86,7 +86,7 @@ end
     [sortedticks,sortedticksidx]  = sort([  dimfig - musclesYcoords]);
 
     % Just dots
-    hS(ttmp) = subplot(2,3,ttmp); hold on;
+    hS(ttmp) = subplot(6,1,ttmp); hold on;
     % This creates a bif of shift on the y axis between electrodes
     yshift =  linspace(-0.2,  0.2, length(ielecs));
     % Starting to plot stuff
@@ -126,5 +126,5 @@ end
     % you're plotting
 end
 % % linkaxes([hS(:)],'x');
-% % saveas(hF,['D:\FigRescources\UH3\LSP05\rehash\PAD\RostrocaudalRC_AUC.png'])
-% % savefig(hF,['D:\FigRescources\UH3\LSP05\rehash\PAD\RostrocaudalRC_AUC'])
+saveas(hF,['D:\FigRescources\UH3\LSP05\rehash\RostrocaudalRC_AUC.png'])
+saveas(hF,['D:\FigRescources\UH3\LSP05\rehash\RostrocaudalRC_AUC.svg'])

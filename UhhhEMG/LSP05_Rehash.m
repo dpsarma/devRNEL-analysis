@@ -1,7 +1,7 @@
 %% UH3 EMG - Recruitment Curves - Quick Load Trial Stats - Testing Version %%
 %% Basic Processing for Frequency and Set on Elec 9 and 16
 
-subjectName = 'LSP05'; setName = 'PAD'; setDescrpt = 'E16_byfreq'; %file safe names only
+subjectName = 'LSP05'; setName = 'FreeStand'; setDescrpt = 'E9_HF'; %file safe names only
 
 % Set Paths and Experiment Names
 path_datatank = ['D:\DATA\UH3 testing\' subjectName '\']; %'C:\DataTanks\2018\'; %'R:\data_raw\human\uh3_stim\';
@@ -135,6 +135,7 @@ for fnum = 1:length(emgFilenames)
                 externalStimulator nSampsPre nSampsPost chanPort C multipolar
 end
         
+%% Get details
 
 clearvars -except reportPath Muscle_ID ...
                   trial subjectName setName ...
@@ -171,7 +172,9 @@ for fnum = 1:length(trial)
             dtPost = 4e-3; % msec after stim onset 
             rmsWindow = 0.050; % post stim RMS Window in s, so 0.05 is 50ms
         otherwise 
-            continue;
+            dtPre = 50e-3; % msec before stim onset 
+            dtPost = 4e-3; % msec after stim onset 
+            rmsWindow = 0.005; % post stim RMS Window in s, so 0.05 is 50ms;
     end
     
      %% Build Epoch Time Vector

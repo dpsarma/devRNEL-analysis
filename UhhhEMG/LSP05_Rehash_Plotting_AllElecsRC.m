@@ -1,40 +1,44 @@
 % % %%%% UH3 EMG - Recruitment Curves - Quick Load Trial Stats - Testing Version B %%
 % % 
-% % for lcall = 4%:4
-% % 
-% %     switch lcall
-% %         case 1
-% %             % elecs 1-8: day9_set2
-% %             load('D:\DATA\UH3 testing\LSP05\data_gen\Day12-Set_1_E1-8RC_1-6mA_500us_1Hz');
-% %             multipolar = 'no';
-% %             anodeElec = [];
-% %             disp('elecs 1-8: day9_set2');
-% %         case 2
-% %             % elecs 9-16: Day8-Set_1_RC_1-6mA_500us_1Hz
-% %             load('D:\DATA\UH3 testing\LSP05\data_gen\Day8-Set_1_RC_1-6mA_500us_1Hz.mat');
-% %             multipolar = 'no';
-% %             anodeElec = [];
-% %             disp('elecs 9-16: Day8-Set_1_RC_1-6mA_500us_1Hz');
-% %         case 3
-% %             % elecs 18-24: Day8-Set_2_RC_1-6mA_500us_1Hz
-% %             load('D:\DATA\UH3 testing\LSP05\data_gen\Day8-Set_2_RC_1-6mA_500us_1Hz.mat');
-% %             multipolar = 'no';
-% %             anodeElec = [];
-% %             disp('elecs 18-24: Day8-Set_2_RC_1-6mA_500us_1Hz');
-% %         case 4
-% %             % elecs 25-32: day9_set1
-% %             load('D:\DATA\UH3 testing\LSP05\data_gen\day9-set1.mat');
-% %             disp('elecs 25-32: day9_set1');
-% %         otherwise
-% %             % multipolar: day9_set3
-% %             load('D:\DATA\UH3 testing\LSP05\data_gen\day9-set3.mat');
-% %             disp('multipolar: day9_set3');
-% %     end
-% % end
+for lcall = 4%:4
+
+    switch lcall
+        case 1
+            % elecs 1-8: day9_set2
+            load('D:\DATA\UH3 testing\LSP05\data_gen\Day12-Set_1_E1-8RC_1-6mA_500us_1Hz');
+            multipolar = 'no';
+            anodeElec = [];
+            disp('elecs 1-8: day9_set2');
+        case 2
+            % elecs 9-16: Day8-Set_1_RC_1-6mA_500us_1Hz
+            load('D:\DATA\UH3 testing\LSP05\data_gen\Day8-Set_1_RC_1-6mA_500us_1Hz.mat');
+            multipolar = 'no';
+            anodeElec = [];
+            disp('elecs 9-16: Day8-Set_1_RC_1-6mA_500us_1Hz');
+        case 3
+            % elecs 18-24: Day8-Set_2_RC_1-6mA_500us_1Hz
+            load('D:\DATA\UH3 testing\LSP05\data_gen\Day8-Set_2_RC_1-6mA_500us_1Hz.mat');
+            multipolar = 'no';
+            anodeElec = [];
+            disp('elecs 18-24: Day8-Set_2_RC_1-6mA_500us_1Hz');
+        case 4
+            % elecs 25-32: day9_set1
+            load('D:\DATA\UH3 testing\LSP05\data_gen\day9-set1.mat');
+            disp('elecs 25-32: day9_set1');
+        otherwise
+            % multipolar: day9_set3
+            load('D:\DATA\UH3 testing\LSP05\data_gen\day9-set3.mat');
+            disp('multipolar: day9_set3');
+    end
+end
 %% Basic Recruitment Curve Stuff for Frequency and Set on all Elecs
     freqs = unique([stimFrequency]);
     pwidths = unique([pulseWidth]);
     elecs = unique([spinalElec]);
+    
+% %     freqs = unique([trial.stimFrequency]);
+% %     pwidths = unique([trial.pulseWidth]);
+% %     elecs = unique([trial.spinalElec]);
 
 % %     %Proto code for looping
 % % % % for p = 1:length(pwidths)
@@ -54,8 +58,8 @@
 % % % % end
 
 % Swapped RF & VL so 3<->2 & 11<->10
-msubset = [9:16]; %or 1:8 for right/intact
-msubset([2 3]) = msubset([3 2]);
+msubset = [1:16]; %or 1:8 for right/intact 1:16 for 
+% msubset([2 3]) = msubset([3 2]);
 
 %% Make RC vectors for each subset.
 check_p = 0.5;
@@ -69,7 +73,9 @@ for r = 1:length(elecs)
     response(r).pulse = check_p; 
     
     eIdx = find(([stimFrequency] == check_f) & ([pulseWidth] == check_p) & ([spinalElec] == elecs(r)));
+% %     eIdx = find([trial.spinalElec] == elecs(r));
     [sortedStim,I] = sort([stimAmp(eIdx)]);
+% %     [sortedStim,I] = sort([trial(eIdx).stimAmp]);
 
     response(r).StimAmps = sortedStim;
     
@@ -97,15 +103,57 @@ for r = 1:length(elecs)
     end
 
     % Get Threshold
-    for i = 1:length(msubset)
-        m = msubset(i);
-        response(r).muscle(m).threshIdx = findchangepts(cumsum(response(r).muscle(m).p2pResponse), 'Statistic','rms');
-        response(r).muscle(m).threshold = (sortedStim(response(r).muscle(m).threshIdx));
-    end
+% %     for i = 1:length(msubset)
+% %         m = msubset(i);
+% %         response(r).muscle(m).threshIdx = findchangepts(cumsum(response(r).muscle(m).p2pResponse), 'Statistic','rms');
+% %         response(r).muscle(m).threshold = (sortedStim(response(r).muscle(m).threshIdx));
+% %     end
+
 end
 
+%% Get Thresholds
+for r = 1:length(elecs)
+    for m = 1:length(msubset)
+        test_diff = response(r).muscle(m).p2pResponse(end) <= (response(r).muscle(m).p2pResponse(1));
+        test_mean = response(r).muscle(m).p2pResponse(end) <= mean(response(r).muscle(m).p2pResponse);
+        test_std = 1 > ((response(r).muscle(m).p2pResponse(end) - mean(response(r).muscle(m).p2pResponse))/(2*std(response(r).muscle(m).p2pResponse))) ;
 
-
+        tmp = test_diff || test_mean; %|| test_std (i);
+        response(r).muscle(m).exist = ~tmp;
+        if tmp
+            response(r).muscle(m).threshIdx = nan;
+            response(r).muscle(m).threshold = nan;
+        else
+            
+            for i = 2:length(response(r).muscle(m).p2pResponse)
+                x = mean(response(r).muscle(m).p2pResponse(1:i));
+                tt(i) = response(r).muscle(m).p2pResponse(i) > (x + std(response(r).muscle(m).p2pResponse(1:i)));
+            end
+            tt(1) = 0;
+            for  i = 3:length(response(r).muscle(m).p2pResponse)
+                if tt(i-1) == 0 && tt(i-2) == 1
+                    tt(i-2) = 0;
+                end
+            end
+            for  i = 3:length(response(r).muscle(m).p2pResponse)
+                if tt(i-1) == 0 && tt(i-2) == 1
+                    tt(i-2) = 0;
+                end
+            end
+            idx = find(tt);
+            if isempty(idx)
+                response(r).muscle(m).threshIdx = nan;
+                response(r).muscle(m).threshold = nan;
+            else
+                response(r).muscle(m).threshIdx = idx(1);
+                response(r).muscle(m).threshold = response(r).StimAmps(idx(1));
+            end
+            clear tt
+        end
+    end
+end
+    
+% Plot CUm Sum vs P2P then adjust
 
 
 
@@ -170,11 +218,12 @@ for r = 1:length(elecs)
         h2(i) = subplot(2,length(msubset)/2,i);
         plot(response(r).StimAmps/1000, response(r).muscle(m).p2pResponse);
         hold on; plot(response(r).StimAmps/1000, cumsum(response(r).muscle(m).p2pResponse));
+        plot(response(r).StimAmps/1000,smooth(cumsum(response(r).muscle(m).p2pResponse)));
         title(response(r).muscle(m).Muscle_ID);
         ylabel('EMG (uV)');
         xlabel('StimAmp (mA)');
 
-        legend('P2P','cumsum');
+        legend('P2P','cumsum', 'smooth');
     end
     % linkaxes([h(:)],'xy');
     tit = sgtitle(['E' num2str(elecs(r)) ' - PS2 vs Cumsum (' num2str(check_p) 'ms ' num2str(check_f) 'Hz)']);
@@ -201,8 +250,6 @@ end
 % % % % close all;
 
 %% Plot Comparison RC
-
-
 msubset = [11 12 16];
 elecs = [1 8 16 18 23 29];
 C = linspecer(length(elecs));
@@ -240,12 +287,16 @@ tit = sgtitle(['Recruitment Curves by Muscle for Electrodes ' num2str(elecs(1)) 
 % % close all;
 
 %% Plot Comparison RC Stacked
+% % clear all;
+% % 
+% % load('D:\FigRescources\UH3\LSP05\rehash\responses_500us_1Hz_allElecsRC.mat')
+% % response = response2; clear response2;
 
-
-msubset = [9 11];%[11 12 16 14];
+labelmuscles = { 'VM', 'VL', 'RF', 'BF', 'ST', 'Ham', 'MG', 'LG'}; %Ham vs TA
+msubset = [9 11 10 12 13 14 15 16]; %[11 12 16 14];
 % % etmp= [response.elec];
 % % elecs = etmp(1:4:end);
-elecs = [1 4 7 9 11 18 13 20 16 23 26 29];
+% % elecs = [response(15:end).elec];%[response.elec]; %[1 4 7 9 11 18 13 20 16 23 26 29]; %
 C = linspecer(length(elecs));
 
 for i = 1:length(msubset)
@@ -254,6 +305,7 @@ for i = 1:length(msubset)
         e = find([response.elec] == elecs(r));
         tmp(e) = max(response(e).muscle(m).p2pResponse);
     end
+    musc_map(m,:) = tmp;
     maxR(m) = max(tmp);
 end
 
@@ -264,7 +316,7 @@ for i = 1:length(msubset)
     for r = 1:length(elecs)
         h(i,r) = subplot(length(elecs),length(msubset),length(msubset)*(r-1)+i);
         e = find([response.elec] == elecs(r));
-        p = area(response(e).StimAmps/1000, response(e).muscle(m).p2pResponse);
+        p = area(response(e).StimAmps/1000, response(e).muscle(m).p2pResponse); %/maxR(m)
         p.FaceColor = C(r,:);
         hold on;
         if i==1
@@ -278,7 +330,10 @@ for i = 1:length(msubset)
         end
 %         legend(['E' num2str(elecs(r))],'Location','northwest');
         box off
-% %         h(i,r).Color = 'none';
+        grid off
+        set(gca,'Visible','off')
+        axis off;
+        h(i,r).Color = 'none';
     end
     
      
@@ -466,3 +521,52 @@ C = linspecer(length(response));
 saveas(hS5,['D:\FigRescources\UH3\LSP05\rehash\PAD\ActiRatio_e' num2str(elecs(1)) '-' num2str(elecs(end)) 'png'])
 savefig(hS5,['D:\FigRescources\UH3\LSP05\rehash\PAD\ActiRatio_e' num2str(elecs(1)) '-' num2str(elecs(end))])
 
+
+%% Plot Onsets and Thresholds
+musclesL = {'VM', 'RF', 'VL', 'BF', 'ST', 'TA', 'MG', 'LG',};
+msubset = [10 12 16 14];
+elecs = [4 7 9 11 18 13 20 16 23 26];
+C = linspecer(length(elecs),'qualitative');
+
+for r = 1:length(elecs)
+    e = find([response2.elec] == elecs(r));
+    for i = 1:length(msubset)
+        m = msubset(i);  
+        tmpOns = [response2(e).muscle(m).onset(response2(e).muscle(m).threshIdx:end)];
+        onset(r,i) = nanmean(tmpOns);
+        onserror(r,i) = nanstd( tmpOns ) / sqrt( length(tmpOns) );
+        
+        threshes(r,i) = response2(e).muscle(m).threshold/1000;
+    end
+end
+
+%% Plot
+hS6 = figure;%maximize;
+% % tiledlayout(1,2);
+% % nexttile
+
+superbar(onset','E', onserror','BarFaceColor',permute(C, [3 1 2]));
+ylabel('Response Onset (ms)');
+% tmp = [' ', mlab, ' '];
+% xticklabels(tmp);
+xticks([1:4]);
+xticklabels(musclesL(msubset-8));
+legend(arrayfun(@num2str,elecs,'UniformOutput',false), 'Location', 'eastoutside', 'Orientation', 'vertical');
+hold on;
+% % 
+% % nexttile
+hS7 = figure;
+superbar(threshes','BarFaceColor',permute(C, [3 1 2]));
+ylabel('Threshold Amplitude (mA)');
+% tmp = [' ', mlab, ' '];
+% xticklabels(tmp);
+xticks([1:4]);ylim([0,6])
+xticklabels(musclesL(msubset-8));
+legend(arrayfun(@num2str,elecs,'UniformOutput',false), 'Location', 'eastoutside', 'Orientation', 'vertical');
+hold on;
+
+saveas(hS6,['D:\FigRescources\UH3\LSP05\rehash\Onset_barplot.png']);
+saveas(hS6,['D:\FigRescources\UH3\LSP05\rehash\Onset_barplot.svg']);
+
+saveas(hS7,['D:\FigRescources\UH3\LSP05\rehash\Threshes_barplot.png']);
+saveas(hS7,['D:\FigRescources\UH3\LSP05\rehash\Threshes_barplot.svg']);

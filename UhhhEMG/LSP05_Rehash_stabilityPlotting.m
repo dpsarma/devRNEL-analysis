@@ -15,34 +15,54 @@
 % % % %         end    
 % % % %     end
 % % % % end
-for r = 1:4
+for r = 1:3
 
     switch r
         case 1
             % elecs 16: Day 6
-            load('D:\FigRescources\UH3\LSP05\rehash\Stability_E16_day6.mat');
+            load('D:\FigRescources\UH3\LSP05\rehash\Stability_E9_day6.mat');
             multipolar = 'no';
             anodeElec = [];
             disp('elecs 16: Day 6');
         case 2
             % elecs 16: Day 8
-            load('D:\FigRescources\UH3\LSP05\rehash\Stability_E16_day8.mat');
+            load('D:\FigRescources\UH3\LSP05\rehash\Stability_E9_day8.mat');
             multipolar = 'no';
             anodeElec = [];
             disp('elecs 16: Day 8');
         case 3
-            % elecs 16: Day 12
-            load('D:\FigRescources\UH3\LSP05\rehash\Stability_E16_day12.mat');
-            multipolar = 'no';
-            anodeElec = [];
-            disp('elecs 16: Day 12');
-        case 4
             % elecs 16: Day 15
-            load('D:\FigRescources\UH3\LSP05\rehash\Stability_E16_day15.mat');
+            load('D:\FigRescources\UH3\LSP05\rehash\Stability_E9_day15.mat');
             disp('elecs 16: Day 15');
         otherwise
             % multipolar: day9_set3
             disp('Pick a fileset');
+% %     switch r
+% %         case 1
+% %             % elecs 16: Day 6
+% %             load('D:\FigRescources\UH3\LSP05\rehash\Stability_E16_day6.mat');
+% %             multipolar = 'no';
+% %             anodeElec = [];
+% %             disp('elecs 16: Day 6');
+% %         case 2
+% %             % elecs 16: Day 8
+% %             load('D:\FigRescources\UH3\LSP05\rehash\Stability_E16_day8.mat');
+% %             multipolar = 'no';
+% %             anodeElec = [];
+% %             disp('elecs 16: Day 8');
+% %         case 3
+% %             % elecs 16: Day 12
+% %             load('D:\FigRescources\UH3\LSP05\rehash\Stability_E16_day12.mat');
+% %             multipolar = 'no';
+% %             anodeElec = [];
+% %             disp('elecs 16: Day 12');
+% %         case 4
+% %             % elecs 16: Day 15
+% %             load('D:\FigRescources\UH3\LSP05\rehash\Stability_E16_day15.mat');
+% %             disp('elecs 16: Day 15');
+% %         otherwise
+% %             % multipolar: day9_set3
+% %             disp('Pick a fileset');
     end
 
 % Basic Recruitment Curve Stuff for Frequency and Set on all Elecs
@@ -349,7 +369,7 @@ end
 %% Plotting Spiders - at EMG vs Sensory Threshold
 hS2= figure; maximize;
 spdrfill = 'on';
-spdrmax(1:8) = 3200; %max(max(p2p_thresh)); 
+spdrmax(1:8) = 3500; %max(max(p2p_thresh)); 
 spdrmin(1:8) = 20; %min(min(p2p_thresh)); 
 spdriter = 3; 
 
@@ -443,7 +463,7 @@ saveas(hS5,['D:\FigRescources\UH3\LSP05\rehash\Stability\ActiRatio_atThreshes_e'
 %% Plotting Spiders - Activation Ratio
 hS5= figure; maximize;
 spdrfill = 'on';
-spdrmax(1:8) = 1500; %max(max(p2p_thresh)); 1200
+spdrmax(1:8) = 2000; %max(max(p2p_thresh)); 1200
 spdrmin(1:8) = 20; %min(min(p2p_thresh)); 20
 spdriter = 5; 
 
@@ -468,8 +488,10 @@ saveas(hS5,['D:\FigRescources\UH3\LSP05\rehash\Stability\ActiRatio_e' num2str(el
 
 
 %% Plot Onset and AUC
+musclesL = {'VM', 'VL', 'RF', 'BF', 'ST', 'TA', 'MG', 'LG',};
+msubset = [9:16];
+elecs = unique([response(:).elec]);
 
-%% PCA for AUC
 for iD = 1:length(response)
     for iM = 1 : length(msubset)
         xinfo = response(iD).muscle(msubset(iM)).p2pResponse;
@@ -480,22 +502,25 @@ for iD = 1:length(response)
         stderror(iD,iM) = std( tmpOns ) / sqrt( length(tmpOns) );
     end
 end
-hs6 = figure;maximize;
+hS6 = figure;maximize;
 tiledlayout(1,3);
 nexttile
-bar([1:8],aucData);ylabel('Cum EMG (uV*mA)');
-legend({response(:).setDescrpt}, 'Location', 'northwest', 'Orientation', 'vertical','Interpreter','none');
+bar([1:8],aucData([1 2 4],:));ylabel('Cum EMG (uV*mA)');
+legend({response([1 2 4]).setDescrpt}, 'Location', 'northwest', 'Orientation', 'vertical','Interpreter','none');
 title('Gross Recruitment');
 xticklabels(musclesL);
 
 nexttile
-bar([1:8],onsets);ylabel('Response Time (ms)')
+bar([1:8],onsets([1 2 4],:));ylabel('Response Time (ms)')
 xticklabels(musclesL);
-legend({response(:).setDescrpt}, 'Location', 'northwest', 'Orientation', 'vertical','Interpreter','none');
+legend({response([1 2 4]).setDescrpt}, 'Location', 'northwest', 'Orientation', 'vertical','Interpreter','none');
 title('Response Onset');
 
 nexttile
-boxplot(onsets)
+boxplot(onsets);
+ylabel('Response Time (ms)')
+xticklabels(musclesL);
+title('Response Onset');
 
 saveas(hS6,['D:\FigRescources\UH3\LSP05\rehash\Stability\AUC_Onset' num2str(elecs(1)) '.png'])
 saveas(hS6,['D:\FigRescources\UH3\LSP05\rehash\Stability\AUC_Onset' num2str(elecs(1)) '.svg'])

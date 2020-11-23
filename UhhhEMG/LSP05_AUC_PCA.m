@@ -53,16 +53,16 @@ title('NNMF AUC by Electrode');
     zlim([0 1]);
 
     %% NNMF for by subgroup
-stimAmps = [2250];
+stimAmps = [1500];%2250
 elecs = [16];
-C = linspecer(6,'qualitative');
+C = linspecer(8,'qualitative');
 % % stimAmps = [1000,3000,6000];
 clear resp h;
 midx = [1 3 2 4 5 6 8 7];
 
 hF = figure; maximize;
     
-for ttmp = 1:6
+for ttmp = 7%1:6
 % %     clearvars -except response ttmp hF resp labelmuscles stimAmps elecs C imuscles
     switch ttmp
     case 1
@@ -83,6 +83,10 @@ for ttmp = 1:6
     case 6
         idelecs = [20 23 24]
         titstring = 'Electrodes 20, 23-24';
+    case 7
+        idelecs = [response(:).elec];
+        titstring = 'Electrodes All';
+            
     otherwise
         idelecs = [1 4 7 8];
     end
@@ -100,7 +104,7 @@ for ttmp = 1:6
         end
     end
             resp(ttmp).elecs = idelecs;
-            subplot(2,3,ttmp)
+            subplot(2,4,ttmp)
         if length(idelecs) <= 2
             k = 1   
         elseif  length(idelecs) > 2
@@ -130,7 +134,19 @@ for ttmp = 1:6
 end
         
 % %         xticklabels
+%% Plot for element 7
+[W3,H3] = nnmf(resp(7).Matrix, 8);
 
+figure;maximize;
+tiledlayout(size(W3,1),1)
+for i = 1:size(W3,1)
+    h(i) = nexttile;
+    bar(W3(i,:));
+    xticklabels(labelmuscles)
+    ylabel(['Synergy ' i ' Weights']);
+end
+linkaxes([h],'y');
+sgtitle('Weights by Muscle')
 %% PCA for all stimAmps
 stimAmps = unique([response(:).StimAmps]);
 
