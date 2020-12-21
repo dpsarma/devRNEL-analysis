@@ -251,7 +251,7 @@ end
 
 %% Plot Comparison RC
 msubset = [11 12 16];
-elecs = [1 8 16 18 23 29];
+% % elecs = [1 8 16 18 23 29];
 C = linspecer(length(elecs));
 
 for i = 1:length(msubset)
