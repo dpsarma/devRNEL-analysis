@@ -32,13 +32,13 @@ for lcall = 4%:4
     end
 end
 %% Basic Recruitment Curve Stuff for Frequency and Set on all Elecs
-    freqs = unique([stimFrequency]);
-    pwidths = unique([pulseWidth]);
-    elecs = unique([spinalElec]);
+% %     freqs = unique([stimFrequency]);
+% %     pwidths = unique([pulseWidth]);
+% %     elecs = unique([spinalElec]);
     
-% %     freqs = unique([trial.stimFrequency]);
-% %     pwidths = unique([trial.pulseWidth]);
-% %     elecs = unique([trial.spinalElec]);
+    freqs = unique([trial.stimFrequency]);
+    pwidths = unique([trial.pulseWidth]);
+    elecs = unique([trial.spinalElec]);
 
 % %     %Proto code for looping
 % % % % for p = 1:length(pwidths)
@@ -72,10 +72,10 @@ for r = 1:length(elecs)
     response(r).freq = check_f;
     response(r).pulse = check_p; 
     
-    eIdx = find(([stimFrequency] == check_f) & ([pulseWidth] == check_p) & ([spinalElec] == elecs(r)));
-% %     eIdx = find([trial.spinalElec] == elecs(r));
-    [sortedStim,I] = sort([stimAmp(eIdx)]);
-% %     [sortedStim,I] = sort([trial(eIdx).stimAmp]);
+% %     eIdx = find(([stimFrequency] == check_f) & ([pulseWidth] == check_p) & ([spinalElec] == elecs(r)));
+    eIdx = find([trial.spinalElec] == elecs(r));
+% %     [sortedStim,I] = sort([stimAmp(eIdx)]);
+    [sortedStim,I] = sort([trial(eIdx).stimAmp]);
 
     response(r).StimAmps = sortedStim;
     
@@ -187,7 +187,7 @@ for r = 1:length(elecs)
     tit = sgtitle(['E' num2str(elecs(r)) ' - RCs plotted 3 ways (' num2str(check_p) 'ms ' num2str(check_f) 'Hz)']);
     text = tit.String
     
-    saveas(hF(r),[setPath tit.String '.png'])
+%     saveas(hF(r),[setPath tit.String '.png'])
 end
 
 
@@ -524,19 +524,25 @@ savefig(hS5,['D:\FigRescources\UH3\LSP05\rehash\PAD\ActiRatio_e' num2str(elecs(1
 
 %% Plot Onsets and Thresholds
 musclesL = {'VM', 'RF', 'VL', 'BF', 'ST', 'TA', 'MG', 'LG',};
-msubset = [10 12 16 14];
-elecs = [4 7 9 11 18 13 20 16 23 26];
+% % msubset = [10 12 16 14];
+% msubset = [4 12 5 13];
+% % elecs = [4 7 9 11 18 13 20 16 23 26];
+% % elecs = [1 2 3 4 5 6 7 8 9 10 11 12 33 34]; LSP02b
 C = linspecer(length(elecs),'qualitative');
 
 for r = 1:length(elecs)
     e = find([response2.elec] == elecs(r));
     for i = 1:length(msubset)
-        m = msubset(i);  
-        tmpOns = [response2(e).muscle(m).onset(response2(e).muscle(m).threshIdx:end)];
-        onset(r,i) = nanmean(tmpOns);
-        onserror(r,i) = nanstd( tmpOns ) / sqrt( length(tmpOns) );
+        m = msubset(i); 
+        if isnan(response2(e).muscle(m).threshIdx)
+            continue; 
+        else
+            tmpOns = [response2(e).muscle(m).onset(response2(e).muscle(m).threshIdx:end)];
+            onset(r,i) = nanmean(tmpOns);
+            onserror(r,i) = nanstd( tmpOns ) / sqrt( length(tmpOns) );
         
-        threshes(r,i) = response2(e).muscle(m).threshold/1000;
+            threshes(r,i) = response2(e).muscle(m).threshold/1000;
+        end
     end
 end
 
@@ -550,23 +556,25 @@ ylabel('Response Onset (ms)');
 % tmp = [' ', mlab, ' '];
 % xticklabels(tmp);
 xticks([1:4]);
-xticklabels(musclesL(msubset-8));
+% xticklabels(musclesL(msubset-8));
+xticklabels(Muscle_ID(msubset));
 legend(arrayfun(@num2str,elecs,'UniformOutput',false), 'Location', 'eastoutside', 'Orientation', 'vertical');
 hold on;
 % % 
 % % nexttile
-hS7 = figure;
-superbar(threshes','BarFaceColor',permute(C, [3 1 2]));
-ylabel('Threshold Amplitude (mA)');
-% tmp = [' ', mlab, ' '];
-% xticklabels(tmp);
-xticks([1:4]);ylim([0,6])
-xticklabels(musclesL(msubset-8));
-legend(arrayfun(@num2str,elecs,'UniformOutput',false), 'Location', 'eastoutside', 'Orientation', 'vertical');
-hold on;
+% % hS7 = figure;
+% % superbar(threshes','BarFaceColor',permute(C, [3 1 2]));
+% % ylabel('Threshold Amplitude (mA)');
+% % % tmp = [' ', mlab, ' '];
+% % % xticklabels(tmp);
+% % xticks([1:4]);ylim([0,6])
+% % % % xticklabels(musclesL(msubset-8));
+% % xticklabels(musclesL(msubset));
+% % legend(arrayfun(@num2str,elecs,'UniformOutput',false), 'Location', 'eastoutside', 'Orientation', 'vertical');
+% % hold on;
 
-saveas(hS6,['D:\FigRescources\UH3\LSP05\rehash\Onset_barplot.png']);
-saveas(hS6,['D:\FigRescources\UH3\LSP05\rehash\Onset_barplot.svg']);
-
-saveas(hS7,['D:\FigRescources\UH3\LSP05\rehash\Threshes_barplot.png']);
-saveas(hS7,['D:\FigRescources\UH3\LSP05\rehash\Threshes_barplot.svg']);
+% % saveas(hS6,['D:\FigRescources\UH3\LSP05\rehash\Onset_barplot.png']);
+% % saveas(hS6,['D:\FigRescources\UH3\LSP05\rehash\Onset_barplot.svg']);
+% % 
+% % saveas(hS7,['D:\FigRescources\UH3\LSP05\rehash\Threshes_barplot.png']);
+% % saveas(hS7,['D:\FigRescources\UH3\LSP05\rehash\Threshes_barplot.svg']);

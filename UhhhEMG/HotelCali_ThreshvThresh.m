@@ -31,7 +31,7 @@ end
 
 for iM = 1 : length(Muscle_ID)
     for iE = 1:length(response)
-        resp(iE) = max(response(iE).muscle(iM).p2pResponse);
+        resp(iE) = nanmax(response(iE).muscle(iM).p2pResponse);
     end
     maxResp(iM) =  max(resp);
 end
@@ -41,7 +41,7 @@ for iE = 1:length(response)
     for iM = 1 : length(Muscle_ID)
         xinfo = response(iE).muscle(iM).p2pResponse/maxResp(iM);
         ampinfo = [ 0 response(iE).StimAmps];
-        aucData(iE,iM) = sum(xinfo.*diff(ampinfo));
+        aucData(iE,iM) = nansum(xinfo.*diff(ampinfo));
         normAuc(iE,iM) = aucData(iE,iM)/max(aucData(:,iM));
     end
     
@@ -51,7 +51,7 @@ end
 for r = 1:length(response)
     for m = 1:length(Muscle_ID)
         threshes(r,m) = response(r).muscle(m).threshold;
-        max_response(r,m) = max([response(r).muscle(m).p2pResponse]);
+        max_response(r,m) = nanmax([response(r).muscle(m).p2pResponse]);
         active(r,m) = response(r).muscle(m).exist;
     end
 end
@@ -208,7 +208,7 @@ box off;
 %% Bilaterality
 for iE = 1:length(elecs)
     n_stim(iE) = length(response(iE).StimAmps);
-    for iM = [1 2 3 4 5 7 8] %1:length(Muscle_ID)/2
+    for iM = [1 2 3 4 5 8] %1:length(Muscle_ID)/2
         if response(iE).muscle(iM).exist && isnan(response(iE).muscle(iM).threshIdx)
             response(iE).muscle(iM).exist = 0
         elseif response(iE).muscle(iM+8).exist && isnan(response(iE).muscle(iM+8).threshIdx)
@@ -260,12 +260,14 @@ leglabs = {'Residual Only', 'Intact Only', 'Bilateral', };
 p_state = [(sum(n_residual)./(sum(n_stim)-sum(n_inactive)))' (sum(n_intact)./(sum(n_stim)-sum(n_inactive)))' (sum(n_bilateral)./(sum(n_stim)-sum(n_inactive)))'    ];
 
 figure;
-bar(p_state([1 2 3 4 5 7 8],:),'stacked');
+bar(p_state([1 2 3 4 5 8],:),'stacked');
 legend(leglabs,'Location', 'southoutside','Orientation','horizontal')
-xticklabels(muscles([1 2 3 4 5 7 8]));
+xticklabels(muscles([1 2 3 4 5 8]));
 box off
 ylim([0 1.1])
 ylabel('% of Stims')
+yticks([0 0.25 0.5 0.75 1.0])
+% yticks([
 title(subjectName)
             
 %% Sensory Thresh vs Normal Thresh
@@ -304,3 +306,74 @@ hl = scatter(elecs,sensethresh, 50,'k');
 legend([Muscle_ID 'Sense Thresh'] , 'Location','eastoutside');
 xticks([1:2:32]);
 
+%% Plot Thresh V Thresh LSP02b
+msub = [1 2 3 4 5 8]; % Remove Ham/TA and SO/MG for LSP02b
+% % esub = [1 2 3 4]; %[5 6 7 8] %[9 10 11 12] %[33 34 35];
+figure; tiledlayout(2,4); maximize; 
+for m = 1:2
+    switch m
+            case 1
+                msub1 = [4:5]; 
+                msub2 = [12:13];
+                titstring = [' - Flexors'];
+            case 2
+                msub1 = [1:3 7:8];
+                msub2 = [9:11 15:16];
+                titstring = [' - Extensors'];
+    end
+    for e = 1:4
+      switch e
+            case 1
+                esub = [1 2 3 4]; %[5 6 7 8] %[9 10 11 12] %[33 34 35];
+                estring = 'e1-4';
+            case 2
+                esub = [5 6 7 8]; %[9 10 11 12] %[33 34 35];
+                estring = 'e5-8';
+            case 3
+                esub = [9 10 11 12]; %[33 34 35];
+                estring = 'e9-12';
+            case 4
+                esub = [33 34 35];
+                estring = 'e33-35';
+      end
+        ax(m) = nexttile; 
+        for r = esub
+            i = find([response.elec] == r);
+            bubblechart(threshes(i,msub2), threshes(i,msub1), AUC_ratio(i,msub1), 'MarkerFaceAlpha',0.20);
+            hold on;
+%             ax_max(i) = max(max(response(r).muscle(m+8).p2pResponse),max(response(r).muscle(m).p2pResponse));
+        end
+            xlabel('Residual (mA)');
+            ylabel('Intact (mA)');
+            ylim([0,6500]);
+            xlim([0,6500]);
+            bubblesize(ax(m),[1 20])
+            pl = line(xlim, ylim, 'Color', '#D3D3D3','LineStyle','--');
+            box off;
+            bubblelim(ax(m),[-1 1])
+            axis(ax(m), 'square')
+            title([estring titstring]);
+            xticks([0 2000 4000 6000]);
+            yticks([0 2000 4000 6000]);
+            xticklabels([0 2 4 6]);
+            yticklabels([0 2 4 6]);
+            
+% % 
+% %             lgd = legend(muscles(msub1));
+% %             blgd.Layout.Tile = 'west';
+% %             lgd.Layout.Tile = 'west';
+
+        
+
+        if m == 1 && e == 4
+            blgd = bubblelegend('Activation: Residual vs Intact');
+            blgd.Layout.Tile = 'west';
+       elseif m == 1 && e==1
+            lgd = legend(muscles(msub1), 'Location', 'northwestoutside');
+        elseif m == 2 && e==1
+            lgd = legend(muscles(msub1), 'Location', 'southwestoutside');
+        end
+    end
+        
+end
+sgtitle('Comparison of Threshold: Residual vs Intact');
