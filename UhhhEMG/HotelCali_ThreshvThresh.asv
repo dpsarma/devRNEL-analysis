@@ -424,9 +424,7 @@ figure; tiledlayout(2,1, 'TileSpacing','compact'); maximize;
             ylim([0,7000]);
             xlim([0,7000]);
             bubblesize(hx(m),[10 36])
-            pl = line([0 6000], [6000, 6000], 'Color', '#D3D3D3','LineStyle','--');
-            pl = line([6000 6000], [6000, 0], 'Color', '#D3D3D3','LineStyle','--');
-            pl = line(xlim, ylim, 'Color', '#D3D3D3','LineStyle','--');
+            pl = line([0 6000], ylim, 'Color', '#D3D3D3','LineStyle','--');
             box off;
             bubblelim(hx(m),[500 3200])
             axis(hx(m), 'square')
