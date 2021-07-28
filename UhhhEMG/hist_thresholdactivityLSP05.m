@@ -7,7 +7,7 @@ for i = 1:length(threshes)
     globaMinIndexes = find(threshes(i,:) == min(threshes(i,:)));
     RatThresh(i, [globaMinIndexes]) = 1;
 end
-
+figure;
 Z = RatThresh(:,9:end);
 bar(sum(Z)/26)
 ylim([0,1])

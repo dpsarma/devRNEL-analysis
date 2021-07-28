@@ -399,49 +399,84 @@ sgtitle('Comparison of Threshold: Residual vs Intact');
 %% Plot Thresh V Thresh LSP05 9 vs 16
 % msub = [1 2 3 4 5 8]; % Remove Ham/TA and SO/MG for LSP02b
 % % esub = [1 2 3 4]; %[5 6 7 8] %[9 10 11 12] %[33 34 35];
-threshes(isnan(allthresh)) =  6500;
-rgbcol = {'#003f5c'; '#2f4b7c'; '#665191'; '#a05195'; '#d45087'; '#f95d6a'; '#ff7c43'; '#ffa600'}
+threshes2 = threshes;
+threshes2(isnan(allthresh)) =  6500;
+xtmp = find(threshes2(14,1:8) == 6000);
+rtmp = [50 0 -50 0 -100]%randi([-250,50],7,1)
+for i = [1 2 3 5] %to skip adjusting stimAmp of 1750 and only those at 1500/6000
+    ii = i;
+% %     if i == 5
+% %         ii = 4;
+% %     end
+    threshes2(14,xtmp(i)) = threshes2(14,xtmp(i)) + rtmp(ii);
+end
+    
+rgbcol = {'#003f5c'; '#2f4b7c'; '#665191'; '#a05195'; '#d45087'; '#f95d6a'; '#ff7c43'; '#ffa600'};
 % rgbcol = {'#762a83'; '#9970ab'; '#c2a5cf'; '#e7d4e8'; '#d9f0d3';'#a6dba0'; '#5aae61'; '#1b7837'};
 % C = hex2rgb(rgbcol);
 D = colormap(flipud(magma(10)));
 C = D(2:end,:);
 % C = linspecer(16, 'qualitative');
-figure; tiledlayout(2,1, 'TileSpacing','compact'); maximize; 
+hx = figure; %%tiledlayout(2,1, 'TileSpacing','compact'); maximize; 
          m = 0;
         for r = [9 16]
             m = m+1;
-            hx(m) = nexttile;
+% %             hx(m) = nexttile;
             i = find([response.elec] == r);
             for c = 1:8
-            bubblechart(threshes(i,c+8), threshes(i,c), aucData(i,c+8), C(c,:), 'MarkerFaceAlpha','flat'); %AUC_ratio(i,c)'MarkerEdgeAlpha','flat',
+% %             bubblechart(threshes(i,c+8), threshes(i,c), (aucData(i,c+8)-aucData(i,c))/(aucData(i,c+8)+aucData(i,c)), C(c,:), 'MarkerFaceAlpha','flat'); %AUC_ratio(i,c)'MarkerEdgeAlpha','flat',
+                if r == 9
+                    scatter(threshes2(i,c+8), threshes2(i,c), 200, C(c,:), 'filled', 'd');
+                elseif r == 16
+                    scatter(threshes2(i,c+8), threshes2(i,c), 200, C(c,:), 'filled','h');
+                end
             hold on;
             end
-            hl = scatter(sensethresh([7 14]),sensethresh([7 14]), 120, 'x','k');
-            title(['e' num2str(r)]);
-           
-            xlabel('Residual (mA)');
-            ylabel('Intact (mA)');
-            ylim([0,7000]);
-            xlim([0,7000]);
-            bubblesize(hx(m),[10 36])
-            pl = line([0 6000], [6000, 6000], 'Color', '#D3D3D3','LineStyle','--');
-            pl = line([6000 6000], [6000, 0], 'Color', '#D3D3D3','LineStyle','--');
-            pl = line(xlim, ylim, 'Color', '#D3D3D3','LineStyle','--');
-            box off;
-            bubblelim(hx(m),[500 3200])
-            axis(hx(m), 'square')
-            xticks([0 2000 4000 6000]);
-            yticks([0 2000 4000 6000]);
-            xticklabels([0 2 4 6]);
-            yticklabels([0 2 4 6]);
+% %             hl = scatter(sensethresh([7 14]),[0 0], 120, 'x','k');
+% % % %             title(['e' num2str(r)]);
+% %            
+% %             xlabel('Residual (mA)');
+% %             ylabel('Intact (mA)');
+% %             ylim([0,7000]);
+% %             xlim([0,7000]);
+% % % %             bubblesize(hx(m),[10 36])
+% %             pl = line([0 6000], [6000, 6000], 'Color', '#D3D3D3','LineStyle','--');
+% %             pl = line([6000 6000], [6000, 0], 'Color', '#D3D3D3','LineStyle','--');
+% %             pl = line(xlim, ylim, 'Color', '#D3D3D3','LineStyle','--');
+% %             box off;
+% % % %             bubblelim(hx(m),[-1 1])
+% %             axis(hx(m), 'square')
+% %             xticks([0 2000 4000 6000]);
+% %             yticks([0 2000 4000 6000]);
+% %             xticklabels([0 2 4 6]);
+% %             yticklabels([0 2 4 6]);
 %             blgd = bubblelegend({'Total Recruitment', '(mV*mA)'});%('Activation: Residual vs Intact');
 %             blgd.Layout.Tile = 'west';
 %  
 %             lgd = legend([muscles {'Sensory', 'Threshold'}], 'Location', 'northwestoutside');
  
          end
-            blgd = bubblelegend({'Total Recruitment', '(mV*mA)'});%('Activation: Residual vs Intact');
-            blgd.Layout.Tile = 'west';
- 
-            lgd = legend([muscles {'Sensory', 'Threshold'}], 'Location', 'northwestoutside');
+% %             blgd = bubblelegend({'Degree of Recruitment', 'Residual vs Intact'});%('Activation: Residual vs Intact');
+% %             blgd.Layout.Tile = 'west';
+% %  
+ hl = scatter(sensethresh([7 14]),[0 0], 120, 'x','k');
+% %             title(['e' num2str(r)]);
+           
+            xlabel('Residual (mA)');
+            ylabel('Intact (mA)');
+            ylim([0,7000]);
+            xlim([0,7000]);
+% %             bubblesize(hx(m),[10 36])
+            pl = line([0 6000], [6000, 6000], 'Color', '#D3D3D3','LineStyle','--');
+            pl = line([6000 6000], [6000, 0], 'Color', '#D3D3D3','LineStyle','--');
+            pl = line(xlim, ylim, 'Color', '#D3D3D3','LineStyle','--');
+            box off;
+% %             bubblelim(hx(m),[-1 1])
+% %             axis(hx, 'square')
+            axis square;
+            xticks([0 2000 4000 6000]);
+            yticks([0 2000 4000 6000]);
+            xticklabels([0 2 4 6]);
+            yticklabels([0 2 4 6]);
+            lgd = legend([muscles muscles {'Sensory', 'Threshold'}], 'Location', 'northwestoutside');
             sgtitle('Comparison of Threshold: Residual vs Intact');
