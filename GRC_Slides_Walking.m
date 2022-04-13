@@ -1,4 +1,6 @@
 %% Quick Plot for Delsys EMG for GRC Slides
+%% Adding this line for GitHub
+
 
 data = py.pickle.load( py.open('C:/data/LL_UH3/LNP02_CL_Ssn056_Set001_Blk001_Trl015.pkl', 'rb'));
 % data = py.pickle.load( py.open('C:/data/LL_UH3/LNP02_CL_Ssn055_Set001_Blk001_Trl002.pkl', 'rb')); %LNP02_CL_Ssn055_Set001_Blk001_Trl002 %LNP02_CL_Ssn053_Set001_Blk001_Trl007
