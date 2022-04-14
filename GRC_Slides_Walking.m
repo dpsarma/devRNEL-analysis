@@ -1,12 +1,22 @@
 %% Quick Plot for Delsys EMG for GRC Slides
 %% Adding this line for GitHub
 
-
-data = py.pickle.load( py.open('C:/data/LL_UH3/LNP02_CL_Ssn056_Set001_Blk001_Trl015.pkl', 'rb'));
-% data = py.pickle.load( py.open('C:/data/LL_UH3/LNP02_CL_Ssn055_Set001_Blk001_Trl002.pkl', 'rb')); %LNP02_CL_Ssn055_Set001_Blk001_Trl002 %LNP02_CL_Ssn053_Set001_Blk001_Trl007
-py.scipy.io.savemat('C:/data/overground.mat', mdict=struct('data', data));
-load('C:\data\overground.mat');
+filename = 'C:/data/LL_UH3/Test CL Walking Trial/LNP02_CL_Ssn053_Set001_Blk001_Trl007';
+fstruct = dir([filename '*.nev']);
+nevFilename = [fstruct(1).folder '\' fstruct(1).name]
+data = py.pickle.load( py.open([filename '.pkl'], 'rb'));
+% data = py.pickle.load( py.open('C:/data/LL_UH3/LNP02_CL_Ssn055_Set001_Blk001_Trl002.pkl', 'rb')); %LNP02_CL_Ssn056_Set001_Blk001_Trl015.pkl %LNP02_CL_Ssn053_Set001_Blk001_Trl007
+py.scipy.io.savemat('C:/data/tmp.mat', mdict=struct('data', data));
+load('C:\data\tmp.mat');
 data.emg = double(data.emg);
+
+%% Get Stims
+trialInfo = load('C:/data/LL_UH3/Test CL Walking Trial/LNP02_CL_Ssn053_Set001_Blk001_Trl007.mat');
+nevStimCh = trialInfo.Stim_params(1).NSChannels{1,1}(1);
+pulseWidth = trialInfo.Stim_params.PulseWidth{1}(1);
+stimLength = pulseWidth*fs + 2;
+stimFreq = trialInfo.Stim_params.Frequency{1}(1);
+
 % Filtering Settings:
 fs = 2000;
 lowCut = 75; %lowest frequency to pass
@@ -18,6 +28,8 @@ Wp = [lowCut, highCut]/(.5*fs);
 emg = filtfilt(b,a,data.emg')';
 
 tend = length(data.time)/fs;
+
+
 mLabels = {"Right TFL", "Right RF", "Right TA", "Right SO", "Right LG", "Right VL",...
     "Left TFL", "Left RF", "Left VL", "Right BF", "Left BF", "Left ST", "Left TA",...
     "Right ST", "Left SO", "Left LG"};
@@ -42,11 +54,8 @@ xlabel ('time (sec)');
 %stackedplot(outdoors,'Title','Weather Data','DisplayLabels', mLabels)
 
 
-% % trialInfo = load('C:/data/LL_UH3/LNP02_CL_Ssn056_Set001_Blk001_Trl015_x0085.nev');
-% % nevStimCh = trialInfo.Stim_params(1).NSChannels{1,1}(1);
 
-% % [stimEvts] = read_stimEvents('C:/data/LL_UH3/LNP02_CL_Ssn056_Set001_Blk001_Trl015_x0085');
-% % 
-% % [ns_status, hFile] = ns_OpenFile('C:/data/LL_UH3/LNP02_CL_Ssn056_Set001_Blk001_Trl015_x0085'); 
-% %         [ns_RESULT, nsFileInfo] = ns_GetFileInfo(hFile);
-% %         ns_CloseFile(hFile);
+[stimEvts] = read_stimEvents(nevFilename,nevStimCh);
+stims = floor(cell2mat(stimEvts)*fs);
+figure; plot(linspace(0,tend,length(data.time)), emg(chan_remap(m),:)*1000);
+hold on; vline([cell2mat(stimEvts)-stimEvts{1}(1)],'r:');
