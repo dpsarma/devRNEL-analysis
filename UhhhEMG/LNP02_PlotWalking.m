@@ -1,25 +1,25 @@
-% % %% Plot and Save figures for EMG Data for Closed Loop Trials
-% % 
-% % 
-% % %% Get Files
-% % % Identify files to load
-% % disp('Please Select the Ripple Data Folder');
-% % [tmpFilenames, emgPathname] = uigetfile(['C:/data/LL_UH3/' '*.pkl'],'Pick files','MultiSelect', 'on');
-% % nevPath = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Closed Loop\';
-% % % Make File List
-% % for f = 1:length(tmpFilenames)
-% %     emgFilenames{f} = tmpFilenames(f);
-% %     trialFilenames{f} = erase(emgFilenames{f}, '.pkl'); 
-% % end
-% % out=regexp(emgPathname,'\','split');
-% % trialtype = out(end-1);
-% % 
-% % mLabels = {"Right TFL", "Right RF", "Right TA", "Right SO", "Right LG", "Right VL",...
-% %     "Left TFL", "Left RF", "Left VL", "Right BF", "Left BF", "Left ST", "Left TA",...
-% %     "Right ST", "Left SO", "Left LG"};
-% % chan_remap = [1 2 6 10 14 3 4 5 7 8 9 11 12 13 15 16]; %To match actual Delsys order
+%% Plot and Save figures for EMG Data for Closed Loop Trials
 
-for f = 10:length(emgFilenames)
+
+%% Get Files
+% Identify files to load
+disp('Please Select the Ripple Data Folder');
+[tmpFilenames, emgPathname] = uigetfile(['C:/data/LL_UH3/' '*.pkl'],'Pick files','MultiSelect', 'on');
+nevPath = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Closed Loop\';
+% Make File List
+for f = 1:length(tmpFilenames)
+    emgFilenames{f} = tmpFilenames(f);
+    trialFilenames{f} = erase(emgFilenames{f}, '.pkl'); 
+end
+out=regexp(emgPathname,'\','split');
+trialtype = out(end-1);
+
+mLabels = {"Right TFL", "Right RF", "Right TA", "Right SO", "Right LG", "Right VL",...
+    "Left TFL", "Left RF", "Left VL", "Right BF", "Left BF", "Left ST", "Left TA",...
+    "Right ST", "Left SO", "Left LG"};
+chan_remap = [1 2 6 10 14 3 4 5 7 8 9 11 12 13 15 16]; %To match actual Delsys order
+
+for f = 1:length(emgFilenames)
     %% Find File
     clear fstruct emg filename data
     filename = trialFilenames{f};
@@ -76,7 +76,7 @@ for f = 10:length(emgFilenames)
         
 
     disp('plotting')
-    figH = figure;
+    figH = figure; maximize;
     tiledlayout(8,2)
     i = 0;
     for m = [9, 1, 10, 2, 11, 3, 12, 4, 13, 5, 14, 6, 15, 7, 16, 8]
@@ -85,7 +85,9 @@ for f = 10:length(emgFilenames)
         plot(linspace(0,tend,length(data.time)), emg(chan_remap(m),:)*1000);
         hold on; 
         if stimStatus == 1
-            vline([cell2mat(stimEvts)-stimEvts{1}(1)],'r:');
+% %             vline([cell2mat(stimEvts)-stimEvts{1}(1)],'r:');
+                scatter([cell2mat(stimEvts)], 0, 0.5, 'r', '+');
+                disp(['Plotting' mLabels(m) '- tile:0' num2str(i)]);     
         end
         
         ylabel([mLabels(chan_remap(m)) ' (mV)']);
@@ -99,7 +101,7 @@ for f = 10:length(emgFilenames)
     %stackedplot(outdoors,'Title','Weather Data','DisplayLabels', mLabels)
     
     tit = sgtitle({cell2mat(trialtype), cell2mat(filename)},'interpreter', 'none');
-    maximize;
+    
 
 
     disp('saving');
