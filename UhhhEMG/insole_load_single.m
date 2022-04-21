@@ -1,5 +1,5 @@
 clear all;
-close all;
+% % close all;
 
 % Opening JSON file
 f = py.open('\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Closed Loop\Insole_data\LNP02_CL_Ssn069_Set001_Blk001_Trl006.json');
@@ -23,15 +23,15 @@ py.scipy.io.savemat('C:/data/tmp_insole.mat', mdict=struct('data', data));
 % % f.close()
 
 for i = 1:length(data)
-    t_left(i) = data{i}.time_L;
+    t_left(i) = double(data{i}.time_L);
     left(:,i) = data{i}.pressure_L;
     cop_L(i) = data{i}.cop_L;
-    t_right(i) = data{i}.time_R;
+    t_right(i) = double(data{i}.time_R);
     right(:,i) = data{i}.pressure_R;
     cop_R(i) = data{i}.cop_R;
 end
-t_left = t_left - t_left(1);
-t_right = t_right - t_right(1);
+t_left = (t_left - t_left(1))/1000;
+t_right = (t_right - t_right(1))/1000;
 %Find phases Left
 mask = logical(cop_L(:).');    %(:).' to force row vector
 stops_L = strfind([false, mask], [0 1]);
@@ -44,31 +44,31 @@ stops_R = strfind([false, mask], [0 1]);
 starts_R = strfind([mask, false], [1 0]);
 centers_R = mean([starts_R;stops_R]);
 
+% % 
+% % figure;
+% % nexttile;
+% % stackedplot(t_left, left([1 15],:));
+% % title('Left Insole')
+% % nexttile;
+% % stackedplot(t_right, right([1 15],:));
+% % title('Right Insole')
+% % nexttile;
+% % plot(t_left, cop_L);
+% % hold on; vline(t_left(starts_L),'r:','swing'); vline(t_left(stops_L), 'k:', 'stance');
+% % % title('CoP: Left');
+% % hold on; yyaxis right
+% % plot(t_right, cop_R);
+% % % title('CoP: Right');
+% % sgtitle('LNP02_CL_Ssn069_Set001_Blk001_Trl006','interpreter', 'none');
 
-figure;
-nexttile;
-stackedplot(t_left, left([1 15],:));
-title('Left Insole')
-nexttile;
-stackedplot(t_right, right([1 15],:));
-title('Right Insole')
-nexttile;
-plot(t_left, cop_L);
-hold on; vline(t_left(starts_L),'r:','swing'); vline(t_left(stops_L), 'k:', 'stance');
-% title('CoP: Left');
-hold on; yyaxis right
-plot(t_right, cop_R);
-% title('CoP: Right');
-sgtitle('LNP02_CL_Ssn069_Set001_Blk001_Trl006','interpreter', 'none');
 
-
-figure;
-plot(t_left, left([1 15],:)); hold on;
-plot(t_right, right([1 15],:));
-yyaxis right
-plot(t_left, cop_L);
-plot(t_right, cop_R);
-vline(t_left(starts_L),'r:','Sw'); vline(t_left(stops_L), 'k:', 'St');
+% % figure;
+% % plot(t_left, left([1 15],:)); hold on;
+% % plot(t_right, right([1 15],:));
+% % yyaxis right
+% % plot(t_left, cop_L);
+% % plot(t_right, cop_R);
+% % vline(t_left(starts_L),'r:','Sw'); vline(t_left(stops_L), 'k:', 'St');
 % % vline(t_right(starts_R),'r-','Sw'); vline(t_left(stops_R), 'k-', 'St');
 
 
