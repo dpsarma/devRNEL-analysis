@@ -21,7 +21,6 @@ mLabels = {"Right TFL", "Right RF", "Right TA", "Right SO", "Right LG", "Right V
 chan_remap = [1 2 6 10 14 3 4 5 7 8 9 11 12 13 15 16]; %To match actual Delsys order
 
 %% Process Files
-% % figH = figure; maximize;
 for f = 1:length(emgFilenames)
     %% Find Files
 % %     close all
@@ -47,7 +46,7 @@ for f = 1:length(emgFilenames)
     emg = data.emg;
 %     emg = filtfilt(b,a,data.emg')';
     tend = length(data.time)/fs;
-% %     emg_time = linspace(0,tend,length(data.time));
+    emg_time = linspace(0,tend,length(data.time));
     
     
     %% Get Insole Data
@@ -104,19 +103,16 @@ for f = 1:length(emgFilenames)
 
     %% Plot EMG w/INSOLEs    
     disp('plotting')
-% %     nexttile;
     figH = figure; maximize;
     tiledlayout(8,2)
     i = 0;
     c = [.875 .875 .875];
-    
-    emg_time = linspace(0,max([t_left(end) t_right(end)]),length(data.time)); %% EMG Time based on insole time length?
 
     for m = [9, 1, 10, 2, 11, 3, 12, 4, 13, 5, 14, 6, 15, 7, 16, 8]
         i = i+1;
         ax(i) = nexttile;
         yyaxis left;
-        plot(emg_time, (emg(chan_remap(m),:)*1000)); %fliprl
+        plot(emg_time, emg(chan_remap(m),:)*1000);
         hold on; 
         mx_cop = max(abs(emg(chan_remap(m),:)))*1000;
         if m >=9
