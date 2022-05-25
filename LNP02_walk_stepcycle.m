@@ -111,66 +111,13 @@ for f = 1:length(emgFilenames)
     c = [.875 .875 .875];
     
     emg_time = linspace(0,max([t_left(end) t_right(end)]),length(data.time)); %% EMG Time based on insole time length?
+for e = size(emg,1)
+    asd = emg(e,:);
+    emgStim{e} = cell2mat(arrayfun(@(x) asd(starts_L(x):starts_L(x+1)), 1:length(starts_L)-1, 'UniformOutput',false)');
+end
 
-    for m = [9, 1, 10, 2, 11, 3, 12, 4, 13, 5, 14, 6, 15, 7, 16, 8]
-        i = i+1;
-        ax(i) = nexttile;
-        yyaxis left;
-        plot(emg_time, (emg(chan_remap(m),:)*1000)); %fliprl
-        hold on; 
-        mx_cop = max(abs(emg(chan_remap(m),:)))*1000;
-        if m >=9
-            yyaxis right; 
-            plot(t_left, cop_L); ylabel('CoP');
-            yyaxis left; hold on;
-            for g =  2:length(starts_L)
-                x = [t_left(starts_L(g-1)) t_left(stops_L(g)) t_left(stops_L(g)) t_left(starts_L(g-1))]; y = [-mx_cop -mx_cop mx_cop mx_cop];
-                 h1 = fill(x, y, c,'FaceAlpha',0.3, 'EdgeColor','none');
-                if g == length(starts_L)
-                    continue;
-                else
-                     x2 = [t_left(stops_L(g)) t_left(starts_L(g)) t_left(starts_L(g)) t_left(stops_L(g))]; 
-                     h2 = fill(x2, y, 'magenta', 'FaceAlpha',0.05,  'EdgeColor','none');
-                end
-            end
-        else
-            yyaxis right; 
-            plot(t_right, cop_R); ylabel('CoP');
-            yyaxis left; hold on;
-
-            for g =  2:length(starts_R)
-                x = [t_right(starts_R(g-1)) t_right(stops_R(g)) t_right(stops_R(g)) t_right(starts_R(g-1))]; y = [-mx_cop -mx_cop mx_cop mx_cop];
-                h1 = fill(x, y, c,'FaceAlpha',0.3, 'EdgeColor','none');
-                if g == length(starts_R)
-                    continue;
-                else
-                    x2 = [t_right(stops_R(g)) t_right(starts_R(g)) t_right(starts_R(g)) t_right(stops_R(g))]; 
-                    h2 = fill(x2, y, 'magenta', 'FaceAlpha',0.05,  'EdgeColor','none');
-                end
-            end
-        end
-    
-        if stimStatus == 1
-% %             vline([cell2mat(stimEvts)-stimEvts{1}(1)],'r:');
-                scatter([cell2mat(stimEvts)], 0, 0.5, 'r', '+');
-                disp(['Plotting' mLabels(m) '- tile:0' num2str(i)]);     
-        end
-        ylabel([mLabels(chan_remap(m)) ' (mV)']);
-        box off
-    end
-    
-%     linkaxes([ax(:)], 'x'); xlim([0,tend]); %ylim([-0.5,.5]); 
-     
-    xlabel ('time (sec)');
-   
-    
-    tit = sgtitle({cell2mat(trialtype), cell2mat(filename)},'interpreter', 'none');
-    stepcycle(f) = length(starts_R)
+    stepcycle(f) = length(starts_R) - 1
     triallength(f) = round(emg_time(end))
-    disp('saving');
-    saveas(figH,['C:\figs\' cell2mat(trialtype) '\' cell2mat(filename) '_s' num2str(stimStatus)  '.svg'])
-    saveas(figH, ['C:\figs\' cell2mat(trialtype) '\' cell2mat(filename) '_s' num2str(stimStatus) '.png'])
-    savefig(figH,['C:\figs\' cell2mat(trialtype) '\' cell2mat(filename) '_s' num2str(stimStatus)])
-    pause(0.1)
+  
     
 end
