@@ -2,6 +2,10 @@
 % Muscle_ID = {'Left Gastroc', 'RTA'};
 Muscle_ID = {'Right Knee', 'Right RF', 'Right M-MG', 'Right L', 'Right MG', 'Right TA', 'Right SO', 'Right LG'};
 
+Muscle_ID = {'Right VM', 'Right RF', 'Right VL', 'Right BF', 'Right ST', ...
+    'Right TA', 'Right SO', 'Right LG','Left VM', 'Left RF', 'Left VL',...
+    'Left BF', 'Left ST', 'Left TA', 'Left MG', 'Left LG'};
+
 %%Filtering Parameters
 fs = 30000; %Hi-Res is 2K, Raw is 30K (put in logic for switching)
 lowCut = 75; %75 lowest frequency to pass
@@ -17,7 +21,7 @@ disp('Please Select the Ripple Data Folder');
 [emgFilenames, emgPathname] = uigetfile('*ns5','Pick files','MultiSelect', 'on');
 
 %% Load Data.  Need to Make Loop for ALL files.
-for i=1:length(emgFilenames)
+for i=1%:length(emgFilenames)
     [analogData,timeVec] = read_continuousData([emgPathname emgFilenames{i}], 'raw',[129:144]); %'raw',[257:276]
 %     [stimEvts,stchannels] = read_stimEvents([emgPathname emgFilenames{i}],1);
     digEvts = read_digitalEvents([emgPathname, emgFilenames{i}],1);

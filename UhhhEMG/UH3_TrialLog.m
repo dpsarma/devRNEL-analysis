@@ -8,18 +8,20 @@ path_stimparams = 'R:\data_raw\human\uh3_stim\'; %'R:\data_generated\human\uh3_s
 
 %% Experiment Session Parameters %'Limit Check f-2Hz PW-1ms' 'RC 500uA-5mA f-1Hz PW-200us'
 % subjectName = 'LSP02b'; setName = 'Elec 1'; setDescrpt = 'Day 15 - 100Hz PW500us SD500ms - Sitting'; %file safe names only
-subjectName = 'LSP05'; setName = 'All Days'; setDescrpt = 'All Trials with EMG'; %file safe names only
+% % subjectName = 'LSP05'; setName = 'All Days'; setDescrpt = 'All Trials with EMG'; %file safe names only
+subjectName = 'LNP02'; setName = 'All Days'; setDescrpt = 'All Trials with EMG'; 
 externalStimulator = 'no'; %no = NanoStims
 chanPort = 128; % 128 or 256 based on which Grapevine Port (B or C)
 
 
-reportPath = ['D:\FigRescources\UH3\' subjectName '\emgRecruitment_Summary\']; %['R:\data_generated\human\uh3_stim\' subjectName '\emgRecruitment_Summary\'];
+% % reportPath = ['D:\FigRescources\UH3\' subjectName '\emgRecruitment_Summary\']; %['R:\data_generated\human\uh3_stim\' subjectName '\emgRecruitment_Summary\'];
+reportPath = ['C:\data\LL_UH3\' subjectName '\emgRecruitment_Summary\'];
 setPath = [reportPath setName '\'];
 mkdir(setPath); %mkdir(reportPath);
 
 %% Identify files to load
 disp('Please Select the Ripple Data Folder');
-[emgFilenames, emgPathname] = uigetfile([path_datatank subjectName '\*.nev'],'Pick files','MultiSelect', 'on');
+[emgFilenames, emgPathname] = uigetfile([path_datatank subjectName '\*.nev'],'Pick files','MultiSelect', 'on'); %.nev or nf6
 disp(['User selected ', fullfile(emgPathname, emgFilenames)]);
 
 disp('Please Select the Folder with the Stim Trial Info:');
@@ -77,7 +79,7 @@ for fnum = 1:length(emgFilenames)
         continue;
     end
     
-    if contains(hFile.Entity(end).Label,'raw')
+    if contains(hFile.Entity(end).Label,'hifreq') %raw
         disp('File Contains EMG');
     else
         disp([emgFilenames{fnum} ' Does not have EMG']);

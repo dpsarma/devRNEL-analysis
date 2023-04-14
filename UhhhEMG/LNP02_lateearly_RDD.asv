@@ -1,0 +1,100 @@
+%%%%   Quick and Dirty Late/Early RDD %
+%LNP02 - E4
+
+Muscle_ID = {'Right TFL', 'Right RF', 'Right VL', 'Right BF', 'Right ST', ...
+        'Right TA', 'Right SO', 'Right LG','Left TFL', 'Left RF','Left VL',...
+        'Left BF', 'Left ST', 'Left TA', 'Left MG', 'Left LG'};
+% Need to double check whether the muscles are VM or TFL.
+%% Initialize Analysis Parameters
+
+% Filtering Settings:
+fs = 2e3; %2e3; %hi-res: 2k; hifreq: 7.5k
+nyq = 0.5*fs;
+
+%Bandpass
+lowCut = 50; %lowest frequency to pass
+highCut = 150; %highest frequency to pass
+Norder = 2;
+Wp = [lowCut, highCut]/(nyq);
+[b,a]=butter(Norder, Wp);
+
+%Notch Filter
+d = designfilt('bandstopiir','FilterOrder',2, ...
+               'HalfPowerFrequency1',59,'HalfPowerFrequency2',61, ...
+               'DesignMethod','butter','SampleRate',fs);
+
+%% Loading Files
+
+for lset = 1:4
+
+switch lset
+    case 1
+        
+        trialname = 'LNP02_Ssn026_Set001_Blk001_Trl009';
+        disp(trialname);
+        nevfile = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\allStimfiles\LNP02_Ssn026_Set001_Blk001_Trl009_x0481.nev';
+        nf3file = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\LNP02_Ssn026_Set001_Blk001_Trl009_x0019.nf3';
+        nf6file = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\LNP02_Ssn026_Set001_Blk001_Trl009_x0019.nf6';
+        stimfile = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Open Loop\stim\LNP02_Ssn026_Set001_Blk001_Trl009.mat';
+        chanbuff = 128;
+        date = '10-04';
+
+    case 2
+        trialname = 'LNP02_Ssn026_Set014_Blk001_Trl003';
+        disp(trialname);
+        nevfile = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\allStimfiles\LNP02_Ssn026_Set014_Blk001_Trl003_x0653.nev';
+        nf3file = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\LNP02_Ssn026_Set014_Blk001_Trl003_x0191.nf3';
+        nf6file = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\LNP02_Ssn026_Set014_Blk001_Trl003_x0191.nf6';
+        stimfile = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Open Loop\stim\LNP02_Ssn026_Set014_Blk001_Trl003.mat';
+        chanbuff = 128;
+        date = '10-04';
+
+    case 3
+        trialname = 'LNP02_Ssn107_Set003_Blk001_Trl011';
+        disp(trialname);
+        nevfile = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\allStimfiles\LNP02_Ssn107_Set003_Blk001_Trl011_x2066.nev';
+        nf3file = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\LNP02_Ssn107_Set003_Blk001_Trl011_x0197.nf3';
+        nf6file = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\LNP02_Ssn107_Set003_Blk001_Trl011_x0197.nf6';
+        stimfile = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Open Loop\stim\LNP02_Ssn107_Set003_Blk001_Trl011.mat';
+        chanbuff = 0;
+        date = '11-20';
+
+    case 4
+        trialname = 'LNP02_Ssn107_Set008_Blk001_Trl002';
+        disp(trialname);
+        nevfile = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\allStimfiles\LNP02_Ssn107_Set008_Blk001_Trl002_x2147.nev';
+        nf3file = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\LNP02_Ssn107_Set008_Blk001_Trl002_x0279.nf3';
+        nf6file = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Trellis\NIP_EMG\LNP02_Ssn107_Set008_Blk001_Trl002_x0279.nf6';
+        stimfile = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\LNP02\data\Open Loop\stim\LNP02_Ssn107_Set008_Blk001_Trl002.mat';
+        chanbuff = 0;
+        date = '11-20';
+end
+
+%% Filtering (Denoising) & Smoothing
+[emg,timeVec] = read_continuousData(nf3file, 'hi-res' , chanbuff+[1:length(Muscle_ID)]);
+    emgF = filtfilt(d,emg')';
+    emgF = filtfilt(b,a,emgF')'; 
+
+    trialInfo = load(stimfile);
+    nevStimCh = trialInfo.Stim_params(1).NSChannels{1,1}(1);
+    pulseWidth = cell2mat(trialInfo.Stim_params(1).PulseWidth);
+    stimDuration = cell2mat(trialInfo.Stim_params(1).Duration)/1000;
+    stimFrequency = cell2mat(trialInfo.Stim_params(1).Frequency);
+    stimAmp = trialInfo.Stim_params(1).SpinalElecAmps{1}(1);
+    [stimEvts,stchannels] = read_stimEvents(nevfile, nevStimCh);
+        stims = floor(cell2mat(stimEvts)*fs);
+
+ figure; 
+   for m = 1:16
+       ax(lset) = nexttile;
+       plot(timeVec,emg(m,:)); hold on; vline(stimEvts{1, 1});
+       box off;
+       title(Muscle_ID(m));
+       xlabel('time(s)');
+       ylabel('EMG(mV)')
+%        ylim([-10 10])
+   end
+   sgtitle([date ' - ' num2str(stimAmp/1000) 'mA - ' num2str(stimFrequency) 'Hz'],'Interpreter','none');
+end
+
+% % linkaxes([ax(:)],'y'); 

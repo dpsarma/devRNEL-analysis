@@ -1,8 +1,9 @@
 Muscle_ID = {'Right VM', 'Right RF', 'Right VL', 'Right BF', 'Right ST', ...
     'Right TA', 'Right SO', 'Right LG','Left VM', 'Left RF', 'Left VL',...
-    'Left BF', 'Left ST', 'Left TA', 'Left MG', 'Left LG'};}
+    'Left BF', 'Left ST', 'Left TA', 'Left MG', 'Left LG'};
 
 %% 1 - Load Data
+% [analogData,timeVec] = read_continuousData('R:\data_raw\human\uh3_stim\testing\devTest1\datafile0001.nev', 'raw',[129:144]);
 [analogData,timeVec] = read_continuousData('R:\data_raw\human\uh3_stim\testing\devTest1\datafile0001.nev', 'raw',[129:144]);
     
 %% 2 - Filtering Parameters
@@ -62,5 +63,5 @@ end
 % %     vline(stimLength/fs,'r-');
 % %     axis([tRef(1) tRef(end) -inf inf])
 % end
-suptitle('Raw EMG vs Filtered(75:7500Hz)')
+sgtitle('Raw EMG vs Filtered(75:7500Hz)')
 maximize;

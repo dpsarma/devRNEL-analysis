@@ -17,6 +17,7 @@ function [analogData, timeVec] = read_continuousData(dataPath, datastream, chann
     %
     %   ACN created 11/16 
     %   ACN modified 2/17
+    %   DPS modified 1/22
     
     if exist(dataPath)
         [~,hFile] = ns_OpenFile(dataPath);
@@ -34,6 +35,11 @@ function [analogData, timeVec] = read_continuousData(dataPath, datastream, chann
     elseif ismember(datastream, {'raw', 'analog'})
         fs = 30e3;
         type_mask = ismember({hFile.FileInfo.Type}, 'ns5');
+        endIdx = hFile.FileInfo(type_mask).TimeStamps(2);
+        timeVec = linspace(0,endIdx/fs,endIdx);
+    elseif ismember(datastream, {'hifreq', 'analog'})
+        fs = 7.5e3;
+        type_mask = ismember({hFile.FileInfo.Type}, 'nf6');
         endIdx = hFile.FileInfo(type_mask).TimeStamps(2);
         timeVec = linspace(0,endIdx/fs,endIdx);
     else

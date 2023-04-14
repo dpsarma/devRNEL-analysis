@@ -17,16 +17,16 @@
 % 4) Set RMS Window and artifact settle buffer as needed.
 
 
-addpath(genpath('R:\data_generated\human\uh3_stim\genSummary\code_tools')); 
-path_datatank = 'R:\data_raw\human\uh3_stim\'; %'C:\DataTanks\2018\'; %'R:\data_raw\human\uh3_stim\';
-path_stimparams = 'R:\data_raw\human\uh3_stim\'; %'R:\data_generated\human\uh3_stim\genSummary\'; %'R:\data_raw\human\uh3_stim\';
+addpath(genpath('\\share.files.pitt.edu\RnelShare\data_generated\human\uh3_stim\genSummary\code_tools')); 
+path_datatank = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\'; %'C:\DataTanks\2018\'; %'R:\data_raw\human\uh3_stim\';
+path_stimparams = '\\share.files.pitt.edu\RnelShare\data_raw\human\uh3_stim\'; %'R:\data_generated\human\uh3_stim\genSummary\'; %'R:\data_raw\human\uh3_stim\';
 
 %% Experiment Session Parameters %'Limit Check f-2Hz PW-1ms' 'RC 500uA-5mA f-1Hz PW-200us'
 % subjectName = 'LSP02b'; setName = 'Elec 1'; setDescrpt = 'Day 15 - 100Hz PW500us SD500ms - Sitting'; %file safe names only
 subjectName = 'LNP02'; setName = 'RCs'; setDescrpt = 'Set 1'; %file safe names only
 externalStimulator = 'no'; %no = NanoStims
 multipolar = 'no';
-chanPort = 128; % 128 or 256 based on which Grapevine Port (B or C)
+chanPort = 0; % 128 or 256 based on which Grapevine Port (B or C)
 artifactBuffer = 0.005; % post stim artifact settle lag in s, so 0.01 is 10ms
 rmsWindow = 0.05; % post stim RMS Window in s, so 0.05 is 50ms
 
@@ -98,7 +98,7 @@ for fnum = 1:length(emgFilenames)
     trial(fnum).Time = join(string([nsFileInfo.Time_Hour nsFileInfo.Time_Min nsFileInfo.Time_Sec nsFileInfo.Time_MilliSec]),':');
     
     %% Load Data
-    [analogData,timeVec] = read_continuousData([emgPathname emgFilenames{fnum}], 'raw' , chanPort+[1:length(Muscle_ID)*2]); %128 vs 256 | 8 vs. 16
+    [analogData,timeVec] = read_continuousData([emgPathname emgFilenames{fnum}], 'hifreq' , chanPort+[1:length(Muscle_ID)*2]); %128 vs 256 | 8 vs. 16
     %% 'Data' -> Bipolar EMG
     for i = 1:2:size(analogData,1)
         bipolar = analogData(i:i+1,:);

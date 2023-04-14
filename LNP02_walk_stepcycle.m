@@ -116,8 +116,8 @@ for f = 1%:length(emgFilenames)
     stepcycle(f) = length(starts_R) - 1
     triallength(f) = round(emg_time(end))
     
-figure; tiledlayout(5,2); maximize;
-    for m = [9 1 11 3 12 4 14 6 16 8]
+figure; tiledlayout(4,1); maximize;
+    for m = [3 4 6 8]%[9 1 11 3 12 4 14 6 16 8]
         z = emg(chan_remap,:);
         mx_cop = max(max(z(chan_remap(m),:)))*1000;
         nexttile;

@@ -1,4 +1,4 @@
-%% Plot and Save figures for EMG Data for Closed Loop Trials
+%% Plot and Save figures for EMG Data for Closed Loop Trials No Stim
 
 
 %% Get Files
@@ -17,8 +17,8 @@ out=regexp(emgPathname,'\','split'); trialtype = out(end-1);
 
 mLabels = {'Right TFL', 'Right RF', 'Right TA', 'Right SO', 'Right LG', 'Right VL',...
     'Left TFL', 'Left RF', 'Left VL', 'Right BF', 'Left BF', 'Left ST', 'Left TA',...
-    'Right ST', 'Left MG', 'Left LG'};
-chan_remap = [1 2 6 10 14 3 4 5 7 8 9 11 12 13 15 16]; %To match Delsys order to standard order
+    'Right ST', 'Left SO', 'Left LG'};
+chan_remap = [1 2 6 10 14 3 4 5 7 8 9 11 12 13 15 16]; %To match actual Delsys order
 
 p = cell(16,1); r = cell(16,1); pz = cell(16,1); rz = cell(16,1);
 mlist = [8 2 10 12 14]; %[10 2 12 4 14 6 16 8];
@@ -87,7 +87,7 @@ for f = 1:length(emgFilenames)
 %% Assign smoothing type
 
 emg_time = linspace(0,size(data.time,2)/fs,length(data.time)); %% EMG Time based on insole time length?  
-if contains(filename, '97')
+if contains(filename, '99')
     e = z(8,:); 
     t = emg_time;
     e = abs(e - mean(e));
@@ -112,69 +112,73 @@ end
 
 %% Assign Vars
     switch filename{1}
-            case 'LNP02_CL_Ssn073_Set001_Blk001_Trl001'
-                  display(filename);
-                  idx_sta = idx([1 10 16 25 33 37 39 42 48]);
-                  idx_sto = idx([10 16 25 33 37 39 42 48 51]);
-            case 'LNP02_CL_Ssn073_Set001_Blk001_Trl002'
-                  display(filename);
-                  idx_sta = idx([7 15 17 22 27]);
-                  idx_sto = idx([15 17 19 27 30]);
-            case 'LNP02_CL_Ssn073_Set001_Blk001_Trl003'
-                  display(filename);
-                  idx_sta = idx([28 36 40 47 50 52 58]);
-                  idx_sto = idx([36 40 47 50 52 58 60]);
-            case 'LNP02_CL_Ssn073_Set001_Blk001_Trl004'
-                  display(filename);
-                  idx_sta = idx([11 20 27 32 38 40]);
-                  idx_sto = idx([20 27 32 38 40 44]);
-            case 'LNP02_CL_Ssn073_Set001_Blk001_Trl005'
-                  display(filename);
-                  idx_sta = idx([1 6 8 12]);
-                  idx_sto = idx([6 8 14]);
-            case 'LNP02_CL_Ssn073_Set001_Blk001_Trl006'
-                  display(filename);
-                  idx_sta = idx([8 17 29 37 40 45 47]);
-                  idx_sto = idx([17 29 37 40 45 47 54]);
-            case 'LNP02_CL_Ssn093_Set001_Blk001_Trl001'
-                  display(filename);
-            case 'LNP02_CL_Ssn093_Set001_Blk001_Trl002'
-                  display(filename);
-            case 'LNP02_CL_Ssn093_Set001_Blk001_Trl003'
-                  display(filename);
-            case 'LNP02_CL_Ssn093_Set001_Blk001_Trl004'
-                  display(filename);
-            case 'LNP02_CL_Ssn093_Set001_Blk001_Trl005'
-                  display(filename);
-            case 'LNP02_CL_Ssn093_Set001_Blk001_Trl006'
-                  display(filename);
-            case 'LNP02_CL_Ssn093_Set001_Blk001_Trl007'
-                  display(filename);
-            case 'LNP02_CL_Ssn097_Set001_Blk001_Trl001'
-                  display(filename);
-                  idx_sta = idx([1 7 11 15 20 26 31]);
-                  idx_sto = idx([7 11 15 20 26 31 38]);
-            case 'LNP02_CL_Ssn097_Set001_Blk001_Trl002'
-                  display(filename);
-                  idx_sta = idx([5 11 15 19 24 26]);
-                  idx_sto = idx([11 15 19 24 26 30]);
-            case 'LNP02_CL_Ssn097_Set001_Blk001_Trl003'
-                  display(filename);
-                  idx_sta = idx([3 10 17 22 26 31 33]);
-                  idx_sto = idx([10 17 22 26 31 33 35]);
-            case 'LNP02_CL_Ssn097_Set001_Blk001_Trl004'
-                    display(filename);
-                  idx_sta = idx([1 9 14 19 22 26]);
-                  idx_sto = idx([9 14 19 22 26 28]); 
-            case 'LNP02_CL_Ssn097_Set001_Blk001_Trl005'
-                    display(filename);
-                    idx_sta = idx([1 5 9 12 15]);
-                  idx_sto = idx([5 9 12 15 19]);
-            case 'LNP02_CL_Ssn097_Set001_Blk001_Trl006'
-                    display(filename);
-                    idx_sta = idx([2 9 14 20 23]);
-                  idx_sto = idx([9 14 20 23 25]);
-        end
+            case 'LNP02_CL_Ssn068_Set001_Blk001_Trl001'
+% %                 display(filename); continue;
+            case 'LNP02_CL_Ssn068_Set001_Blk001_Trl002'
+                 display(filename);
+            case 'LNP02_CL_Ssn068_Set001_Blk001_Trl003'
+                display(filename);
+            case 'LNP02_CL_Ssn068_Set001_Blk001_Trl004'
+                display(filename);                                
+            case 'LNP02_CL_Ssn068_Set001_Blk001_Trl005'
+                display(filename);
+            case 'LNP02_CL_Ssn068_Set001_Blk001_Trl006'
+                display(filename);
+            case 'LNP02_CL_Ssn068_Set001_Blk001_Trl007'
+                display(filename);
+            case 'LNP02_CL_Ssn068_Set001_Blk001_Trl008'
+                display(filename);
+            case 'LNP02_CL_Ssn068_Set001_Blk001_Trl009'
+                display(filename);
+            case 'LNP02_CL_Ssn075_Set001_Blk001_Trl001'
+                display(filename);
+            case 'LNP02_CL_Ssn075_Set001_Blk001_Trl002'
+                display(filename);
+            case 'LNP02_CL_Ssn075_Set001_Blk001_Trl003'
+                display(filename);
+            case 'LNP02_CL_Ssn075_Set001_Blk001_Trl004'
+                display(filename);
+            case 'LNP02_CL_Ssn075_Set001_Blk001_Trl005'
+                display(filename);
+            case 'LNP02_CL_Ssn075_Set001_Blk001_Trl006'
+                display(filename);
+            case 'LNP02_CL_Ssn092_Set001_Blk001_Trl001'
+                display(filename);
+            case 'LNP02_CL_Ssn092_Set001_Blk001_Trl002'
+                display(filename);
+            case 'LNP02_CL_Ssn092_Set001_Blk001_Trl003'
+                display(filename);
+            case 'LNP02_CL_Ssn092_Set001_Blk001_Trl004'
+                display(filename);
+            case 'LNP02_CL_Ssn092_Set001_Blk001_Trl005'
+                display(filename);
+            case 'LNP02_CL_Ssn092_Set001_Blk001_Trl006'
+                display(filename);
+	        case 'LNP02_CL_Ssn099_Set001_Blk001_Trl001'
+                display(filename);
+                idx_sta = idx([11 20 26 34 39 45 50]);
+                idx_sto = idx([20 26 34 39 45 50 57]);
+            case 'LNP02_CL_Ssn099_Set001_Blk001_Trl002'
+                display(filename);
+                idx_sta = idx([6 11 14]);
+                idx_sto = idx([11 14 16]);
+            case 'LNP02_CL_Ssn099_Set001_Blk001_Trl003'
+                display(filename);
+                idx_sta = idx([7 11 16 21 23 28]);
+                idx_sto = idx([11 16 21 23 28 30]);
+            case 'LNP02_CL_Ssn099_Set001_Blk001_Trl004'
+                display(filename);
+                idx_sta = idx([4 8 11 13]);
+                idx_sto = idx([8 11 13 15]);
+            case 'LNP02_CL_Ssn099_Set001_Blk001_Trl005'
+                display(filename);
+                idx_sta = idx([5 10 15 21 26 29]);
+                idx_sto = idx([10 15 21 26 29 32]);
+            case 'LNP02_CL_Ssn099_Set001_Blk001_Trl006'
+                display(filename);
+                idx_sta = idx([1 7 14 20 24]);
+                idx_sto = idx([7 14 20 24 26]);
+    end
 
 % %     figure;
 % %     plot(t,emg(8,:)); hold on;
@@ -252,11 +256,10 @@ end
 
     %% All Epochs
     figure; tiledlayout(length(mlist),1); maximize;
-     col_map = [0 20 89; 82 130 192; 245 77 0; 250 138 115]/255;
+    col_map = [0 20 89; 82 130 192; 245 77 0; 250 138 115]/255;
 
     for m = mlist
-% %         nexttile;
-    figure;
+        nexttile;
         m
         if m == 10 || m == 2
             i = 1
@@ -270,18 +273,17 @@ end
             disp('muscle not found');
             continue;
         end
-       
+
         for f = 1:length(EP)
             for count = 1:size(EP(f).m(m).i,2)
             plot(EP(f).m(m).i(count).etim, EP(f).m(m).i(count).epoch, 'Color', col_map(i,:));  
             hold on;
             end
         end
-        xlim([0 100]); %xticklabels([]); box off;
-        ylim([0 8])
+        xlim([0 100]); xticklabels([]); box off;
         title(mLabels(chan_remap(m)));
-%         ylabel({'Activation', '(z-scored EMG)'});
+% %         ylabel({'Activation', '(z-scored EMG)'});
     end
-    xticklabels('auto')
+% %     xticklabels([0 20 40 60 80 100]);
     xlabel('% of Gait Cycle')
-% %     sgtitle({cell2mat(trialtype), '%Gait Phase', 'Right Heel Strike:Heel Strike'},'interpreter', 'none');
+    sgtitle({cell2mat(trialtype), '%Gait Phase', 'Right Heel Strike:Heel Strike'},'interpreter', 'none');

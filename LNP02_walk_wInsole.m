@@ -22,7 +22,7 @@ chan_remap = [1 2 6 10 14 3 4 5 7 8 9 11 12 13 15 16]; %To match actual Delsys o
 
 %% Process Files
 % % figH = figure; maximize;
-for f = 1:length(emgFilenames)
+for f = 1%:length(emgFilenames)
     %% Find Files
     close all
     clearvars -except f trialFilenames nevPath insolePath mLabels chan_remap emgFilenames emgPathname trialtype stepcycle triallength
@@ -106,13 +106,14 @@ for f = 1:length(emgFilenames)
     disp('plotting')
 % %     nexttile;
     figH = figure; maximize;
-    tiledlayout(8,2)
+    tiledlayout(2,1)
+% %     tiledlayout(8,2)
     i = 0;
     c = [.875 .875 .875];
     
     emg_time = linspace(0,max([t_left(end) t_right(end)]),length(data.time)); %% EMG Time based on insole time length?
 
-    for m = [9, 1, 10, 2, 11, 3, 12, 4, 13, 5, 14, 6, 15, 7, 16, 8]
+    for m = [16 8]%%[9, 1, 10, 2, 11, 3, 12, 4, 13, 5, 14, 6, 15, 7, 16, 8]
         i = i+1;
         ax(i) = nexttile;
         yyaxis left;
@@ -121,38 +122,38 @@ for f = 1:length(emgFilenames)
         mx_cop = max(abs(emg(chan_remap(m),:)))*1000;
         if m >=9
             yyaxis right; 
-            plot(t_left, cop_L); ylabel('CoP');
+            plot(t_left, cop_L); ylabel('Left CoP'); %cop_R
             yyaxis left; hold on;
             for g =  2:length(starts_L)
                 x = [t_left(starts_L(g-1)) t_left(stops_L(g)) t_left(stops_L(g)) t_left(starts_L(g-1))]; y = [-mx_cop -mx_cop mx_cop mx_cop];
-                 h1 = fill(x, y, c,'FaceAlpha',0.3, 'EdgeColor','none');
+                 h1 = fill(x, y, 'cyan','FaceAlpha',0.3, 'EdgeColor','none');
                 if g == length(starts_L)
                     continue;
                 else
                      x2 = [t_left(stops_L(g)) t_left(starts_L(g)) t_left(starts_L(g)) t_left(stops_L(g))]; 
-                     h2 = fill(x2, y, 'magenta', 'FaceAlpha',0.05,  'EdgeColor','none');
+                     h2 = fill(x2, y, [0.8 0.7 0.8], 'FaceAlpha',0.5,  'EdgeColor',[0.5 0.2 0.55]); %('magenta')('none)
                 end
             end
         else
             yyaxis right; 
-            plot(t_right, cop_R); ylabel('CoP');
+            plot(t_right, cop_R); ylabel('Right CoP');%cop_R
             yyaxis left; hold on;
 
             for g =  2:length(starts_R)
                 x = [t_right(starts_R(g-1)) t_right(stops_R(g)) t_right(stops_R(g)) t_right(starts_R(g-1))]; y = [-mx_cop -mx_cop mx_cop mx_cop];
-                h1 = fill(x, y, c,'FaceAlpha',0.3, 'EdgeColor','none');
+                h1 = fill(x, y, 'cyan','FaceAlpha',0.3, 'EdgeColor','none');
                 if g == length(starts_R)
                     continue;
                 else
                     x2 = [t_right(stops_R(g)) t_right(starts_R(g)) t_right(starts_R(g)) t_right(stops_R(g))]; 
-                    h2 = fill(x2, y, 'magenta', 'FaceAlpha',0.05,  'EdgeColor','none');
+                    h2 = fill(x2, y, [0.8 0.7 0.8], 'FaceAlpha',0.5,  'EdgeColor',[0.5 0.2 0.55]);
                 end
             end
         end
     
         if stimStatus == 1
-% %             vline([cell2mat(stimEvts)-stimEvts{1}(1)],'r:');
-                scatter([cell2mat(stimEvts)], 0, 0.5, 'r', '+');
+            vline([cell2mat(stimEvts)-stimEvts{1}(1)],'r:');
+% %                 scatter([cell2mat(stimEvts)], 0, 0.5, 'r', '+');
                 disp(['Plotting' mLabels(m) '- tile:0' num2str(i)]);     
         end
         ylabel([mLabels(chan_remap(m)) ' (mV)']);
@@ -167,10 +168,10 @@ for f = 1:length(emgFilenames)
     tit = sgtitle({cell2mat(trialtype), cell2mat(filename)},'interpreter', 'none');
     stepcycle(f) = length(starts_R)
     triallength(f) = round(emg_time(end))
-    disp('saving');
-    saveas(figH,['C:\figs\' cell2mat(trialtype) '\' cell2mat(filename) '_s' num2str(stimStatus)  '.svg'])
-    saveas(figH, ['C:\figs\' cell2mat(trialtype) '\' cell2mat(filename) '_s' num2str(stimStatus) '.png'])
-    savefig(figH,['C:\figs\' cell2mat(trialtype) '\' cell2mat(filename) '_s' num2str(stimStatus)])
-    pause(0.1)
+% %     disp('saving');
+% %     saveas(figH,['C:\figs\' cell2mat(trialtype) '\' cell2mat(filename) '_s' num2str(stimStatus)  '.svg'])
+% %     saveas(figH, ['C:\figs\' cell2mat(trialtype) '\' cell2mat(filename) '_s' num2str(stimStatus) '.png'])
+% %     savefig(figH,['C:\figs\' cell2mat(trialtype) '\' cell2mat(filename) '_s' num2str(stimStatus)])
+% %     pause(0.1)
     
 end
