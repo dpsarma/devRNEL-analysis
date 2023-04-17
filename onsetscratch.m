@@ -1,71 +1,80 @@
-%% Get Data
- Muscle_ID = {'Right VM', 'Right RF', 'Right VL', 'Right BF', 'Right ST', ...
-        'Right TA', 'Right SO', 'Right LG','Left VM', 'Left RF','Left VL',...
-        'Left BF', 'Left ST', 'Left TA', 'Left MG', 'Left LG'};
-for lcall = 0%:4
+% % %% Get Data
+% %  Muscle_ID = {'Right VM', 'Right RF', 'Right VL', 'Right BF', 'Right ST', ...
+% %         'Right TA', 'Right SO', 'Right LG','Left VM', 'Left RF','Left VL',...
+% %         'Left BF', 'Left ST', 'Left TA', 'Left MG', 'Left LG'};
 
-    switch lcall
-        case 1
-            % elecs 1-8: day9_set2
-            load('D:\DATA\UH3 testing\LSP05\data_gen\Day12-Set_1_E1-8RC_1-6mA_500us_1Hz');
-            multipolar = 'no';
-            anodeElec = [];
-            disp('elecs 1-8: day9_set2');
-            freqs = unique([stimFrequency]);
-            pwidths = unique([pulseWidth]);
-            elecs = unique([spinalElec]);
-        case 2
-            % elecs 9-16: Day8-Set_1_RC_1-6mA_500us_1Hz
-            load('D:\DATA\UH3 testing\LSP05\data_gen\Day8-Set_1_RC_1-6mA_500us_1Hz.mat');
-            multipolar = 'no';
-            anodeElec = [];
-            disp('elecs 9-16: Day8-Set_1_RC_1-6mA_500us_1Hz');
-            freqs = unique([stimFrequency]);
-            pwidths = unique([pulseWidth]);
-            elecs = unique([spinalElec]);
-        case 3
-            % elecs 18-24: Day8-Set_2_RC_1-6mA_500us_1Hz
-            load('D:\DATA\UH3 testing\LSP05\data_gen\Day8-Set_2_RC_1-6mA_500us_1Hz.mat');
-            multipolar = 'no';
-            anodeElec = [];
-            disp('elecs 18-24: Day8-Set_2_RC_1-6mA_500us_1Hz');
-            freqs = unique([stimFrequency]);
-            pwidths = unique([pulseWidth]);
-            elecs = unique([spinalElec]);
-        case 4
-            % elecs 25-32: day9_set1
-            load('D:\DATA\UH3 testing\LSP05\data_gen\day9-set1.mat');
-            disp('elecs 25-32: day9_set1');
-            freqs = unique([stimFrequency]);
-            pwidths = unique([pulseWidth]);
-            elecs = unique([spinalElec]);
-        otherwise
-            % multipolar: day9_set3
-% %             load('D:\DATA\UH3 testing\LSP05\data_gen\day9-set3.mat');
-% %             disp('multipolar: day9_set3');
-            load('C:\figs\UH3\HotelCali\LNP02\LNP02_PAD_Elec4_1Hz.mat')
-            disp('LNP02: e4-1hz');
-            
+Muscle_ID = {'Right VM', 'Right RF', 'Right VL', 'Right BF', 'Right ST', ...
+    'Right TA', 'Right SO', 'Right LG', 'Left VM', 'Left RF', 'Left VL',...
+    'Left BF', 'Left ST', 'Left Ham', 'Left SO', 'Left LG'};
+
+% % for lcall = 0%:4
+% % 
+% %     switch lcall
+% %         case 1
+% %             % elecs 1-8: day9_set2
+% %             load('D:\DATA\UH3 testing\LSP05\data_gen\Day12-Set_1_E1-8RC_1-6mA_500us_1Hz');
+% %             multipolar = 'no';
+% %             anodeElec = [];
+% %             disp('elecs 1-8: day9_set2');
+% %             freqs = unique([stimFrequency]);
+% %             pwidths = unique([pulseWidth]);
+% %             elecs = unique([spinalElec]);
+% %         case 2
+% %             % elecs 9-16: Day8-Set_1_RC_1-6mA_500us_1Hz
+% %             load('D:\DATA\UH3 testing\LSP05\data_gen\Day8-Set_1_RC_1-6mA_500us_1Hz.mat');
+% %             multipolar = 'no';
+% %             anodeElec = [];
+% %             disp('elecs 9-16: Day8-Set_1_RC_1-6mA_500us_1Hz');
+% %             freqs = unique([stimFrequency]);
+% %             pwidths = unique([pulseWidth]);
+% %             elecs = unique([spinalElec]);
+% %         case 3
+% %             % elecs 18-24: Day8-Set_2_RC_1-6mA_500us_1Hz
+% %             load('D:\DATA\UH3 testing\LSP05\data_gen\Day8-Set_2_RC_1-6mA_500us_1Hz.mat');
+% %             multipolar = 'no';
+% %             anodeElec = [];
+% %             disp('elecs 18-24: Day8-Set_2_RC_1-6mA_500us_1Hz');
+% %             freqs = unique([stimFrequency]);
+% %             pwidths = unique([pulseWidth]);
+% %             elecs = unique([spinalElec]);
+% %         case 4
+% %             % elecs 25-32: day9_set1
+% %             load('D:\DATA\UH3 testing\LSP05\data_gen\day9-set1.mat');
+% %             disp('elecs 25-32: day9_set1');
+% %             freqs = unique([stimFrequency]);
+% %             pwidths = unique([pulseWidth]);
+% %             elecs = unique([spinalElec]);
+% %         otherwise
+% %             % multipolar: day9_set3
+% % % %             load('D:\DATA\UH3 testing\LSP05\data_gen\day9-set3.mat');
+% % % %             disp('multipolar: day9_set3');
+% %             load('C:\figs\UH3\HotelCali\LNP02\LNP02_PAD_Elec4_1Hz.mat')
+% %             disp('LNP02: e4-1hz');
+% %             
+% %             freqs = unique([trial.stimFrequency]);
+% %             pwidths = unique([trial.pulseWidth]);
+% %             elecs = unique([trial.spinalElec]);
+% %             fs = 7.5e3;
+% %             nyq = 0.5*fs;
+% %     end
+% % end
+
+%%
             freqs = unique([trial.stimFrequency]);
             pwidths = unique([trial.pulseWidth]);
             elecs = unique([trial.spinalElec]);
-            fs = 7.5e3;
+            fs = 30e3; %or 7.5e3 or 2e3
             nyq = 0.5*fs;
-    end
-end
-
-%%
-
     
 
     %% Make RC vectors for each subset.
     msubset = [1:16];
-check_p = 0.2;
-check_f = 1;
+check_p = trial(1).pulseWidth;
+check_f = trial(1).stimFrequency;
 artifactBuffer = 0.005;
 dtPre = 50e-3; % msec before stim onset 
 dtPost = 100e-3; % msec after stim onset 
-rmsWindow = 0.05; % post stim RMS Window in s, so 0.05 is 50ms 
+ % post stim RMS Window in s, so 0.05 is 50ms 
 
             
 disp(['Processing: ' num2str(check_p) 'ms ' num2str(check_f) 'Hz']);
@@ -157,20 +166,21 @@ for r = 1:length(elecs)
 % %             meta(r).muscle(m).peak_var(t) = nanvar([meta(r).muscle(m).peak(t,:)]);
 % %             meta(r).muscle(m).peak_std(t) = nanstd([meta(r).muscle(m).peak(t,:)]);
             close all;
-            figure;%maximize;
+            figure; nexttile; %maximize;
             plot(trial(n).epochTimeVec, trial(n).meanTrace{1, m},'LineWidth',2);
             hold on;
-            plot(trial(n).epochTimeVec, abs(trial(n).meanTrace{1, m}),'LineWidth',2);
+%             plot(trial(n).epochTimeVec, abs(trial(n).meanTrace{1, m}),'LineWidth',2);
             
                 title(strcat('e',num2str(meta(r).elec),' - ', Muscle_ID(m),' - trial ', num2str(t)));
 % %                 [x,y] = ginput(1);
+                pause(0.01);
                 prompt = 'Is there a response? Y/N [Y]: ';
                 x = input(prompt,'s');
 
-                if isempty(x)
-% %                     meta(r).muscle(m).onset(t) = NaN;
-% %                     meta(r).muscle(m).peak_onset(t) = NaN;
-% %                     meta(r).muscle(m).peak(t) = NaN;   
+                if contains(x,'n','IgnoreCase',true)
+                    meta(r).muscle(m).onset(t) = NaN;
+                    meta(r).muscle(m).peak_onset(t) = NaN;
+                    meta(r).muscle(m).peak(t) = NaN;   
                     meta(r).muscle(m).p2pResponse(t) = NaN;
                     meta(r).muscle(m).peakResponse(t) = NaN;
                     meta(r).muscle(m).peaktime(t) = NaN;
@@ -183,6 +193,8 @@ for r = 1:length(elecs)
                     [meta(r).muscle(m).peakResponse(t), mi] = max(abs(trial(n).meanTrace{m}(stimEnd:end)));
                     meta(r).muscle(m).peaktime(t) = trial(n).epochTimeVec(mi+stimEnd-1);
                     meta(r).muscle(m).responseRMS(t) = trial(n).responseRMS(m);
+
+
                 end
 
             meta(r).mean(m).base(t) = mean(trial(n).baseline(m,:));
@@ -219,11 +231,12 @@ for r = 1:length(elecs)
     end
 end
 %% Plot Onsets
+response = meta;
 msub = [1 2 3 4 5 8]; % Remove Ham/TA and SO/MG for LSP02b
 % % esub = [1 2 3 4]; %[5 6 7 8] %[9 10 11 12] %[33 34 35];
 figure; maximize; tiledlayout(6,4);
 for m = msub
-    for e = 1:4
+    for e = 0;1:4
       switch e
             case 1
                 esub = [1 2 3 4]; %[5 6 7 8] %[9 10 11 12] %[33 34 35];
@@ -233,6 +246,8 @@ for m = msub
                 esub = [9 10 11 12]; %[33 34 35];
             case 4
                 esub = [33 34 35];
+          otherwise
+              esub = elecs;
       end
         ax(m) = nexttile; 
         for i = esub

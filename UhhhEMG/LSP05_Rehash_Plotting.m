@@ -502,8 +502,8 @@ C = linspecer(length(check_f));
             
  end
  set(0,'defaultAxesFontSize',12)
- linkaxes([hs(:)],'y');
+%  linkaxes([hs(:)],'y');
  sgtitle(['Tracking Post-activation response (E' num2str(elecs) ',5mA)']);
- linkaxes([hs],'xy');
- saveas(hF2,['D:\FigRescources\UH3\LSP05\rehash\VL_BF_LG\E' num2str(elecs) '_PAD.png']);
- savefig(hF2,['D:\FigRescources\UH3\LSP05\rehash\VL_BF_LG\E' num2str(elecs) '_PAD']);
+%  linkaxes([hs],'xy');
+%  saveas(hF2,['D:\FigRescources\UH3\LSP05\rehash\VL_BF_LG\E' num2str(elecs) '_PAD.png']);
+%  savefig(hF2,['D:\FigRescources\UH3\LSP05\rehash\VL_BF_LG\E' num2str(elecs) '_PAD']);

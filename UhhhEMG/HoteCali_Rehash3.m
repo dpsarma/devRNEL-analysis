@@ -3,10 +3,10 @@ clear
 clc
 % close all
 %% Subject Info and Load Data Files
-subjectName = 'LNP02'; setName = '20Hz';
+subjectName = 'LSP05'; setName = '20Hz';
 task= 'PAD';
-Elec='Elec04';
-filename_query='Ssn026_Set014'; %Ssn049_Set020', 1Hz; %Ssn049_Set017, 2Hz %Ssn049_Set014, 5Hz
+Elec='Elec09';
+filename_query='Ssn015_Set003'; %Ssn049_Set020', 1Hz; %Ssn049_Set017, 2Hz %Ssn049_Set014, 5Hz
         Muscle_ID = {'Right VM', 'Right RF', 'Right VL', 'Right BF', 'Right ST', ...
         'Right TA', 'Right SO', 'Right LG','Left VM', 'Left RF','Left VL',...
         'Left BF', 'Left ST', 'Left TA', 'Left SO', 'Left LG'};
@@ -23,7 +23,7 @@ setPath = [reportPath setName '\'];
 %% Initialize Analysis Parameters
 
 % Filtering Settings:
-fs = 7.5e3;
+fs = 30e3;%7.5e3;
 nyq = 0.5*fs;
 
 %Bandpass
@@ -100,7 +100,7 @@ for fnum = 1:length(emgFilenames)
     trial(fnum).Time = join(string([nsFileInfo.Time_Hour nsFileInfo.Time_Min nsFileInfo.Time_Sec nsFileInfo.Time_MilliSec]),':');
     
     %% Load Data
-    [analogData,timeVec] = read_continuousData([char(emgPathname) char(emgFilenames{fnum}{1})], 'hifreq' , chanPort+[1:length(Muscle_ID)]); %128 vs 256 | 8 vs. 16
+    [analogData,timeVec] = read_continuousData([char(emgPathname) char(emgFilenames{fnum}{1})], 'raw' , chanPort+[1:length(Muscle_ID)]); %128 vs 256 | 8 vs. 16
     %% 'Data' -> Bipolar EMG
 %     for i = 1:2:size(analogData,1)
 %         bipolar = analogData(i:i+1,:);
