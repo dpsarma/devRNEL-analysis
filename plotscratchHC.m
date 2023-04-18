@@ -8,31 +8,33 @@
 % %         end
 % %     end
 
-
+disp('LNP02')
 clear all
-load('C:\figs\HotelCali\LNP02\LNP02_PAD_Elec4_20Hz.mat');
+load('C:\figs\UH3\HotelCali\LNP02\LNP02_PAD_Elec4_20Hz.mat');
+% load('C:\figs\HotelCali\LNP02\LNP02_PAD_Elec4_20Hz.mat');
 
 t = 11;
 fs = 7.5e3;
-begin = round(1.15*fs); %sec*fs
+begin = round(1.10*fs); %sec*fs
 stop = round(1.25*fs);
-figure;tiledlayout(3,1)
-for m = [11 12 13] %VM BF ST
+figure;tiledlayout(4,1)
+for m = [9 10 12 13] %VM BF ST
     ax(t) = nexttile;
     x = trial(t).timeVec(begin:stop);
     plot(x, trial(t).emgF(m,begin:stop));
-    
-    stim = trial(t).stims(1)/fs;
+
+    stim = trial(t).stims(1)/fs+0.5;
     hold on;
-    vline([stim stim+0.05])
-    ylim = [-500 500];
-    
-
+    ylim([-500 500]);
+%     vline([1.16 1.16+0.05]);
 end
-linkaxes([ax(:)],'xy');
+% linkaxes([ax(:)],'xy');
 
+
+disp('LSP02b');
 clear all
-load('C:\figs\HotelCali\LSP02b\LSP02b_PAD_Elec1_2Hz.mat');
+load('C:\figs\UH3\HotelCali\LSP02b\LSP02b_PAD_Elec1_2Hz.mat');
+% load('C:\figs\HotelCali\LSP02b\LSP02b_PAD_Elec1_2Hz.mat');
 
 t = 16;
 fs = 30e3;
@@ -51,14 +53,18 @@ for m = [9 10 12 13] %VM RF BF ST
     y = [trial(t).emgF(m,begin1:stop1) trial(t).emgF(m,begin2:stop2-1) trial(t).emgF(m,begin3:stop3-1)];
     x = trial(t).timeVec(begin:stop);
     plot(x, y);
+    ylim([-500 500]);
     stim = trial(t).stims(1)/fs;
     hold on;
     vline([stim stim+0.05])
-end
-linkaxes([ax(:)],'xy');
     
+end
+% linkaxes([ax(:)],'xy');
+    
+disp('LSP05');
 clear all
-load('C:\figs\HotelCali\LSP05\LSP05_PAD_Elec9_20Hz.mat');
+load('C:\figs\UH3\HotelCali\LSP05\LSP05_PAD_Elec9_20Hz.mat');
+% load('C:\figs\HotelCali\LSP05\LSP05_PAD_Elec9_20Hz.mat');
 
 t = 108;
 fs = 30e3;
@@ -71,7 +77,7 @@ for m = [9 12 16 14] %VM BF ST
     plot(x, trial(t).emgF(m,begin:stop));
     ylim([-3e3 3e3])
 end
-linkaxes([ax(:)],'xy');
+% linkaxes([ax(:)],'xy');
 
 
 
